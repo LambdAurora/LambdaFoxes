@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "lambdafoxes",
+  "name": "LambdaFoxes",
+  "version": "${version}",
+  "description": "A fox enhancement mod for Fabric.",
+  "authors": [
+    "LambdAurora"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/lambdafoxes",
+    "sources": "https://github.com/LambdAurora/LambdaFoxes.git",
+    "issues": "https://github.com/LambdAurora/LambdaFoxes/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/lambdafoxes/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.lambdaurora.lambdafoxes.LambdaFoxes"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.8.0",
+    "fabric": "*",
+    "minecraft": ">=1.16"
+  },
+  "recommends": {
+    "modmenu": ">=1.12.2"
+  },
+  "suggests": {
+    "flamingo": "*",
+    "ltr": "*"
+  },
+  "breaks": {
+    "modmenu": "<1.12.2",
+    "optifabric": "*"
+  },
+  "custom": {
+    "modupdater": {
+      "strategy": "curseforge",
+      "projectID": 0
+    }
+  }
+}
