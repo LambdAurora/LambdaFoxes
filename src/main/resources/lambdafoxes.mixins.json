@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "me.lambdaurora.lambdafoxes.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "FoxEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

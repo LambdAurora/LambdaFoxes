@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "me.lambdaurora.lambdafoxes.client.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "FoxEntityRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
