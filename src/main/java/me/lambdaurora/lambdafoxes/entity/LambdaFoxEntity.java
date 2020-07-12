@@ -1,7 +1,7 @@
 /*
  * Copyright © 2020 LambdAurora <aurora42lambda@gmail.com>
  *
- * This file is part of LambDynamicLights.
+ * This file is part of LambdaFoxes.
  *
  * Licensed under the MIT license. For more information,
  * see the LICENSE file.

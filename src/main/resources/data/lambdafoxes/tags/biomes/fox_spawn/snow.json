@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:snowy_beach",
+    "minecraft:snowy_mountains",
+    "minecraft:snowy_taiga",
+    "minecraft:snowy_taiga_hills",
+    "minecraft:snowy_taiga_mountains",
+    "minecraft:snowy_tundra"
+  ]
+}

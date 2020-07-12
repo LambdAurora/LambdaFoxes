@@ -1,7 +1,7 @@
 /*
  * Copyright © 2020 LambdAurora <aurora42lambda@gmail.com>
  *
- * This file is part of LambDynamicLights.
+ * This file is part of LambdaFoxes.
  *
  * Licensed under the MIT license. For more information,
  * see the LICENSE file.
@@ -9,13 +9,18 @@
 
 package me.lambdaurora.lambdafoxes.registry;
 
+import me.lambdaurora.lambdafoxes.LambdaFoxes;
+import me.lambdaurora.lambdafoxes.tag.BiomeTags;
 import net.minecraft.entity.passive.FoxEntity;
+import net.minecraft.tag.Tag;
+import net.minecraft.world.biome.Biome;
 import org.aperlambda.lambdacommon.Identifier;
 import org.aperlambda.lambdacommon.utils.Identifiable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Represents a fox type.
@@ -26,11 +31,11 @@ import java.util.Map;
  */
 public class FoxType implements Identifiable
 {
-    private static final Map<Integer, FoxType> TYPES = new HashMap<>();
+    private static final List<FoxType> TYPES = new ArrayList<>();
 
     /* Default Minecraft fox types */
 
-    public static final FoxType RED  = new FoxType(new Identifier("minecraft", "red"), 0, false, true)
+    public static final FoxType RED  = new FoxType(new Identifier("minecraft", "red"), 0, 8, null, true)
     {
         @Override
         public String getKey()
@@ -44,7 +49,7 @@ public class FoxType implements Identifiable
             return entity.isSleeping() ? new net.minecraft.util.Identifier("textures/entity/fox/fox_sleep.png") : new net.minecraft.util.Identifier("textures/entity/fox/fox.png");
         }
     };
-    public static final FoxType SNOW = new FoxType(new Identifier("minecraft", "snow"), 1, false, true)
+    public static final FoxType SNOW = new FoxType(new Identifier("minecraft", "snow"), 1, 8, null, true)
     {
         @Override
         public String getKey()
@@ -53,22 +58,37 @@ public class FoxType implements Identifiable
         }
     };
 
-    public static final FoxType SILVER = register(new Identifier("lambdafoxes", "silver"));
-    public static final FoxType CROSS  = register(new Identifier("lambdafoxes", "cross"));
+    public static final FoxType SILVER   = register(LambdaFoxes.id("silver"), 4, RED, true);
+    public static final FoxType CROSS    = register(LambdaFoxes.id("cross"), 5, RED, true);
+    public static final FoxType PLATINUM = register(LambdaFoxes.id("platinum"), 3, RED, true);
+    public static final FoxType MARBLE   = register(LambdaFoxes.id("marble"), 2, RED, false);
+    public static final FoxType WHITE    = register(LambdaFoxes.id("white"), 2, RED, true);
 
-    private final Identifier id;
-    private final int        numericId;
-    public final  boolean    canSpawnFromBreed;
-    public final  boolean    mutated;
+    private final Identifier            id;
+    private final int                   numericId;
+    public final  int                   weight;
+    public final  Optional<FoxType>     inherited;
+    public final  boolean               natural;
+    public final  Tag.Identified<Biome> biomes;
 
-    private FoxType(@NotNull Identifier id, int numericId, boolean mutated, boolean canSpawnFromBreed)
+    private FoxType(@NotNull Identifier id, int numericId, int weight, @Nullable FoxType inherited, boolean natural)
     {
         this.id = id;
         this.numericId = numericId;
-        this.mutated = mutated;
-        this.canSpawnFromBreed = canSpawnFromBreed;
+        this.weight = Math.max(0, weight);
+        this.inherited = Optional.ofNullable(inherited);
+        this.natural = natural;
 
-        TYPES.put(numericId, this);
+        if (inherited != null)
+            this.biomes = inherited.biomes;
+        else {
+            String biomeNamespace = id.getNamespace();
+            if (biomeNamespace.equalsIgnoreCase("minecraft"))
+                biomeNamespace = LambdaFoxes.MODID;
+            this.biomes = BiomeTags.register(new Identifier(biomeNamespace, "fox_spawn/" + id.getName()));
+        }
+
+        TYPES.add(this);
     }
 
     @Override
@@ -98,6 +118,26 @@ public class FoxType implements Identifiable
     }
 
     /**
+     * Returns the probability weight. Greater is the weight, more chances there is for that type to spawn.
+     *
+     * @return The probability weight.
+     */
+    public int getWeight()
+    {
+        return this.weight;
+    }
+
+    /**
+     * Returns whether this fox type is a mutated variation.
+     *
+     * @return True if this fox type is a mutated variation, else false.
+     */
+    public boolean isMutated()
+    {
+        return this.inherited.isPresent();
+    }
+
+    /**
      * Returns the texture identifier.
      *
      * @param entity The entity.
@@ -109,6 +149,61 @@ public class FoxType implements Identifiable
         if (entity.isSleeping())
             base += "_sleep";
         return new net.minecraft.util.Identifier(this.id.getNamespace(), "textures/entity/fox/" + base + ".png");
+    }
+
+    /**
+     * Rolls the fox type for the specified biome.
+     *
+     * @param random Random.
+     * @param biome  The biome.
+     * @return The chosen fox type.
+     */
+    public static @NotNull FoxType rollFoxType(@NotNull Random random, @NotNull Biome biome)
+    {
+        List<FoxType> types = TYPES.parallelStream().filter(type -> !type.inherited.isPresent() && type.biomes.contains(biome)).collect(Collectors.toList());
+        if (types.size() == 0)
+            return rollFoxType(random, RED, true);
+
+        FoxType rolled = rollFoxType(random, types);
+        if (rolled == null)
+            rolled = RED;
+        return rollFoxType(random, rolled, true);
+    }
+
+    public static @NotNull FoxType rollFoxType(@NotNull Random random, @NotNull FoxType parent, boolean natural)
+    {
+        List<FoxType> types = TYPES.parallelStream()
+                .filter(type -> {
+                    if (type == parent)
+                        return true;
+                    if (natural && !type.natural)
+                        return false;
+                    return type.inherited.isPresent() && type.inherited.get() == parent;
+                })
+                .collect(Collectors.toList());
+        FoxType rolled = rollFoxType(random, types);
+        if (rolled == null)
+            rolled = RED;
+        return rolled;
+    }
+
+    public static @Nullable FoxType rollFoxType(@NotNull Random random, @NotNull List<FoxType> types)
+    {
+        if (types.size() == 0)
+            return RED;
+
+        int sum = types.parallelStream().map(FoxType::getWeight).reduce(0, Integer::sum);
+
+        int r = random.nextInt() % sum;
+
+        FoxType rolled;
+        int acc = 0;
+        Iterator<FoxType> iterator = types.iterator();
+        while ((rolled = iterator.next()) != null) {
+            acc += rolled.getWeight();
+            if (r < acc) break;
+        }
+        return rolled;
     }
 
     /**
@@ -138,8 +233,7 @@ public class FoxType implements Identifiable
      */
     public static @NotNull FoxType fromId(@NotNull Identifier id)
     {
-        return TYPES.entrySet().parallelStream()
-                .map(Map.Entry::getValue)
+        return TYPES.parallelStream()
                 .filter(entry -> entry.getIdentifier().equals(id))
                 .findAny().orElse(RED);
     }
@@ -152,27 +246,23 @@ public class FoxType implements Identifiable
      */
     public static @NotNull FoxType fromNumericId(int id)
     {
-        return TYPES.getOrDefault(id, RED);
+        return TYPES.parallelStream()
+                .filter(entry -> entry.getNumericId() == id)
+                .findAny().orElse(RED);
     }
 
-    public static @NotNull FoxType register(@NotNull Identifier id)
+    public static @NotNull FoxType register(@NotNull Identifier id, int weight, boolean natural)
     {
-        return register(id, true);
+        return register(id, weight, null, natural);
     }
 
-    public static @NotNull FoxType register(@NotNull Identifier id, boolean mutated)
-    {
-        return register(id, mutated, true);
-    }
-
-    public static @NotNull FoxType register(@NotNull Identifier id, boolean mutated, boolean canSpawnFromBreed)
+    public static @NotNull FoxType register(@NotNull Identifier id, int weight, @Nullable FoxType inherited, boolean natural)
     {
         int numericId = computeNumericId(id);
         if (numericId == 0 || numericId == 1)
             throw new IllegalStateException("FoxType `" + id.toString() + "` is invalid, cannot compute valid numeric id.");
 
-        System.out.println("Computed id " + numericId + " for " + id.toString());
-        return new FoxType(id, numericId, mutated, canSpawnFromBreed);
+        return new FoxType(id, numericId, weight, inherited, natural);
     }
 
     private static int computeNumericId(int a, int b)
