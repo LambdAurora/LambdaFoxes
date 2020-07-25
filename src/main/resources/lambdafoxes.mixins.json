@@ -1,9 +1,19 @@
 {
   "required": true,
   "package": "me.lambdaurora.lambdafoxes.mixin",
+  "plugin": "me.lambdaurora.lambdafoxes.LambdaFoxesMixinPlugin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "FoxEntityMixin"
+    "BiomeAccessor",
+    "EnchantmentMixin",
+    "FennecFoxSpawnMixin",
+    "FoxEntityMixin",
+    "FoxSpawnMixin",
+    "SpawnRestrictionMixin",
+    "TagObjectEntryMixin",
+    "terrestria.PricklyDesertPlantBlockMixin",
+    "terrestria.TerrestriaBiomesMixin",
+    "traverse.AutumnalWoodsBiomesMixin"
   ],
   "injectors": {
     "defaultRequire": 1

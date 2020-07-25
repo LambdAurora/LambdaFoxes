@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "lambdafoxes:diamond_fox_armor"
+    ]
+  },
+  "criteria": {
+    "has_diamond": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:diamond_ingot"
+          }
+        ]
+      }
+    },
+    "has_sweet_berries": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:sweet_berries"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "lambdafoxes:diamond_fox_armor"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_diamond",
+      "has_sweet_berries",
+      "has_the_recipe"
+    ]
+  ]
+}

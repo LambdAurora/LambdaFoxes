@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "lambdafoxes:leather_fox_armor"
+    ]
+  },
+  "criteria": {
+    "has_leather": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:leather"
+          }
+        ]
+      }
+    },
+    "has_sweet_berries": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:sweet_berries"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "lambdafoxes:leather_fox_armor"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_leather",
+      "has_sweet_berries",
+      "has_the_recipe"
+    ]
+  ]
+}

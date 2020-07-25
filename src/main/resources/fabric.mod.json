@@ -18,6 +18,9 @@
   "entrypoints": {
     "main": [
       "me.lambdaurora.lambdafoxes.LambdaFoxes"
+    ],
+    "client": [
+      "me.lambdaurora.lambdafoxes.client.LambdaFoxesClient"
     ]
   },
   "mixins": [

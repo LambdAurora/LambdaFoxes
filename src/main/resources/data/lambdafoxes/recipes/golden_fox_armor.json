@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  F",
+    "MBM",
+    " S "
+  ],
+  "key": {
+    "F": {
+      "item": "minecraft:sweet_berries"
+    },
+    "M": {
+      "item": "minecraft:gold_ingot"
+    },
+    "B": {
+      "tag": "minecraft:wool"
+    },
+    "S": {
+      "item": "minecraft:string"
+    }
+  },
+  "result": {
+    "item": "lambdafoxes:golden_fox_armor"
+  }
+}

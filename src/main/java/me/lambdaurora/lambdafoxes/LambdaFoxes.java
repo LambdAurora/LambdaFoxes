@@ -9,7 +9,7 @@
 
 package me.lambdaurora.lambdafoxes;
 
-import me.lambdaurora.lambdafoxes.registry.FoxType;
+import me.lambdaurora.lambdafoxes.registry.LambdaFoxesRegistry;
 import me.lambdaurora.lambdafoxes.tag.BiomeTagReloadListener;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -43,7 +43,7 @@ public class LambdaFoxes implements ModInitializer
 
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new BiomeTagReloadListener());
 
-        FoxType.fromId("minecraft:red");
+        LambdaFoxesRegistry.init();
     }
 
     /**

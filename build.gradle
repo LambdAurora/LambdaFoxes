@@ -22,6 +22,10 @@ repositories {
         url = 'https://aperlambda.github.io/maven'
     }
     maven { url = "https://jitpack.io" }
+    maven {
+        name = 'Earthcomputer Mods'
+        url = 'https://dl.bintray.com/earthcomputer/mods'
+    }
 }
 
 configurations {
@@ -39,6 +43,9 @@ dependencies {
 
     modImplementation "io.github.prospector:modmenu:${project.modmenu_version}"
     modImplementation "com.github.jellysquid3:sodium:1.16.x~dev-SNAPSHOT"
+
+    modImplementation "com.terraformersmc:terrestria:2.0.3+build.46"
+    modImplementation "com.terraformersmc:traverse:2.2.13+build.27"
 
     shadow "com.electronwill.night-config:core:3.6.3"
     shadow "com.electronwill.night-config:toml:3.6.3"

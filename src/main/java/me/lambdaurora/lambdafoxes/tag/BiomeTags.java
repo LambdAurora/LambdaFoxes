@@ -73,7 +73,6 @@ public class BiomeTags
         void update(Function<net.minecraft.util.Identifier, Tag<Biome>> tagFactory)
         {
             this.currentTag = tagFactory.apply(this.id);
-            System.out.println("UPDATED TAG " + (this.currentTag == null ? ("null (" + this.id.toString() + ")") : this.id.toString()));
         }
 
         @Override

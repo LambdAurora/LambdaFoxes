@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "lambdafoxes:diamond_fox_armor"
+  },
+  "addition": {
+    "item": "minecraft:netherite_ingot"
+  },
+  "result": {
+    "item": "lambdafoxes:netherite_fox_armor"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:desert",
+    "minecraft:desert_hills",
+    "minecraft:desert_lakes",
+    "minecraft:savanna",
+    "minecraft:savanna_plateau",
+    "minecraft:shattered_savanna",
+    "minecraft:shattered_savanna_plateau",
+    "terrestria:dunes",
+    "terrestria:dunes_edge",
+    "terrestria:oasis"
+  ]
+}

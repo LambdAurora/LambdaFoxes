@@ -3,7 +3,9 @@
   "package": "me.lambdaurora.lambdafoxes.client.mixin",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "FoxEntityRendererMixin"
+    "FoxEntityRendererMixin",
+    "FoxHeldItemFeatureRendererMixin",
+    "ModelPartAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

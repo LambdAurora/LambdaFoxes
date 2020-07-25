@@ -11,6 +11,7 @@ package me.lambdaurora.lambdafoxes.registry;
 
 import me.lambdaurora.lambdafoxes.LambdaFoxes;
 import me.lambdaurora.lambdafoxes.tag.BiomeTags;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.FoxEntity;
 import net.minecraft.tag.Tag;
 import net.minecraft.world.biome.Biome;
@@ -35,7 +36,7 @@ public class FoxType implements Identifiable
 
     /* Default Minecraft fox types */
 
-    public static final FoxType RED  = new FoxType(new Identifier("minecraft", "red"), 0, 8, null, true)
+    public static final FoxType RED  = new FoxType(new Identifier("minecraft", "red"), 0, 8, null, true, 1.0F, EntityType.FOX, false, false)
     {
         @Override
         public String getKey()
@@ -49,7 +50,7 @@ public class FoxType implements Identifiable
             return entity.isSleeping() ? new net.minecraft.util.Identifier("textures/entity/fox/fox_sleep.png") : new net.minecraft.util.Identifier("textures/entity/fox/fox.png");
         }
     };
-    public static final FoxType SNOW = new FoxType(new Identifier("minecraft", "snow"), 1, 8, null, true)
+    public static final FoxType SNOW = new FoxType(new Identifier("minecraft", "snow"), 1, 8, null, true, 1.0F, EntityType.FOX, false, false)
     {
         @Override
         public String getKey()
@@ -58,20 +59,26 @@ public class FoxType implements Identifiable
         }
     };
 
-    public static final FoxType SILVER   = register(LambdaFoxes.id("silver"), 4, RED, true);
-    public static final FoxType CROSS    = register(LambdaFoxes.id("cross"), 5, RED, true);
-    public static final FoxType PLATINUM = register(LambdaFoxes.id("platinum"), 3, RED, true);
-    public static final FoxType MARBLE   = register(LambdaFoxes.id("marble"), 2, RED, false);
-    public static final FoxType WHITE    = register(LambdaFoxes.id("white"), 2, RED, true);
+    public static final FoxType SILVER   = new Builder(LambdaFoxes.id("silver"), 4, true).inherits(RED).register();
+    public static final FoxType CROSS    = new Builder(LambdaFoxes.id("cross"), 5, true).inherits(RED).register();
+    public static final FoxType PLATINUM = new Builder(LambdaFoxes.id("platinum"), 3, true).inherits(RED).register();
+    public static final FoxType MARBLE   = new Builder(LambdaFoxes.id("marble"), 2, false).inherits(RED).register();
+    public static final FoxType WHITE    = new Builder(LambdaFoxes.id("white"), 2, true).inherits(RED).register();
 
-    private final Identifier            id;
-    private final int                   numericId;
-    public final  int                   weight;
-    public final  Optional<FoxType>     inherited;
-    public final  boolean               natural;
-    public final  Tag.Identified<Biome> biomes;
+    public static final FoxType FENNEC = new Builder(LambdaFoxes.id("fennec"), 8, true).scaleFactor(0.8f).bigEars(true).register();
 
-    private FoxType(@NotNull Identifier id, int numericId, int weight, @Nullable FoxType inherited, boolean natural)
+    private final Identifier                      id;
+    private final int                             numericId;
+    public final  int                             weight;
+    public final  Optional<FoxType>               inherited;
+    public final  boolean                         natural;
+    public final  Tag.Identified<Biome>           biomes;
+    public final  float                           scaleFactor;
+    public final  EntityType<? extends FoxEntity> limitedTo;
+    public final  boolean                         bigEars;
+    public final  boolean                         fireImmune;
+
+    private FoxType(@NotNull Identifier id, int numericId, int weight, @Nullable FoxType inherited, boolean natural, float scaleFactor, @NotNull EntityType<? extends FoxEntity> limitedTo, boolean bigEars, boolean fireImmune)
     {
         this.id = id;
         this.numericId = numericId;
@@ -87,6 +94,11 @@ public class FoxType implements Identifiable
                 biomeNamespace = LambdaFoxes.MODID;
             this.biomes = BiomeTags.register(new Identifier(biomeNamespace, "fox_spawn/" + id.getName()));
         }
+
+        this.scaleFactor = scaleFactor;
+        this.limitedTo = limitedTo;
+        this.bigEars = bigEars;
+        this.fireImmune = fireImmune;
 
         TYPES.add(this);
     }
@@ -138,6 +150,17 @@ public class FoxType implements Identifiable
     }
 
     /**
+     * Returns whether this fox type is compatible with the specified entity type.
+     *
+     * @param type The entity type.
+     * @return True if this fox type is compatible with the entity type.
+     */
+    public boolean isCompatible(EntityType<? extends FoxEntity> type)
+    {
+        return this.limitedTo.equals(type);
+    }
+
+    /**
      * Returns the texture identifier.
      *
      * @param entity The entity.
@@ -160,19 +183,16 @@ public class FoxType implements Identifiable
      */
     public static @NotNull FoxType rollFoxType(@NotNull Random random, @NotNull Biome biome)
     {
-        List<FoxType> types = TYPES.parallelStream().filter(type -> !type.inherited.isPresent() && type.biomes.contains(biome)).collect(Collectors.toList());
+        List<FoxType> types = TYPES.stream().filter(type -> !type.inherited.isPresent() && type.biomes.contains(biome)).collect(Collectors.toList());
         if (types.size() == 0)
             return rollFoxType(random, RED, true);
 
-        FoxType rolled = rollFoxType(random, types);
-        if (rolled == null)
-            rolled = RED;
-        return rollFoxType(random, rolled, true);
+        return rollFoxType(random, rollFoxType(random, types), true);
     }
 
     public static @NotNull FoxType rollFoxType(@NotNull Random random, @NotNull FoxType parent, boolean natural)
     {
-        List<FoxType> types = TYPES.parallelStream()
+        List<FoxType> types = TYPES.stream()
                 .filter(type -> {
                     if (type == parent)
                         return true;
@@ -181,18 +201,23 @@ public class FoxType implements Identifiable
                     return type.inherited.isPresent() && type.inherited.get() == parent;
                 })
                 .collect(Collectors.toList());
-        FoxType rolled = rollFoxType(random, types);
-        if (rolled == null)
-            rolled = RED;
-        return rolled;
+        return rollFoxType(random, types, parent);
     }
 
-    public static @Nullable FoxType rollFoxType(@NotNull Random random, @NotNull List<FoxType> types)
+    public static @NotNull FoxType rollFoxType(@NotNull Random random, @NotNull List<FoxType> types)
+    {
+        return rollFoxType(random, types, RED);
+    }
+
+    public static @NotNull FoxType rollFoxType(@NotNull Random random, @NotNull List<FoxType> types, @NotNull FoxType defaultType)
     {
         if (types.size() == 0)
-            return RED;
+            return defaultType;
 
-        int sum = types.parallelStream().map(FoxType::getWeight).reduce(0, Integer::sum);
+        int sum = 0;
+        for (FoxType type : types) {
+            sum += type.getWeight();
+        }
 
         int r = random.nextInt() % sum;
 
@@ -203,6 +228,8 @@ public class FoxType implements Identifiable
             acc += rolled.getWeight();
             if (r < acc) break;
         }
+        if (rolled == null)
+            rolled = defaultType;
         return rolled;
     }
 
@@ -233,9 +260,20 @@ public class FoxType implements Identifiable
      */
     public static @NotNull FoxType fromId(@NotNull Identifier id)
     {
-        return TYPES.parallelStream()
+        return TYPES.stream()
                 .filter(entry -> entry.getIdentifier().equals(id))
                 .findAny().orElse(RED);
+    }
+
+    /**
+     * Returns the fox type associated to the identifier.
+     *
+     * @param id The identifier.
+     * @return The associated fox type.
+     */
+    public static @NotNull FoxType fromId(@NotNull net.minecraft.util.Identifier id)
+    {
+        return fromId(new Identifier(id.getNamespace(), id.getPath()));
     }
 
     /**
@@ -246,23 +284,14 @@ public class FoxType implements Identifiable
      */
     public static @NotNull FoxType fromNumericId(int id)
     {
-        return TYPES.parallelStream()
+        return TYPES.stream()
                 .filter(entry -> entry.getNumericId() == id)
                 .findAny().orElse(RED);
     }
 
-    public static @NotNull FoxType register(@NotNull Identifier id, int weight, boolean natural)
+    public static @NotNull Optional<FoxType> findFirstCompatible(@NotNull EntityType<? extends FoxEntity> entityType)
     {
-        return register(id, weight, null, natural);
-    }
-
-    public static @NotNull FoxType register(@NotNull Identifier id, int weight, @Nullable FoxType inherited, boolean natural)
-    {
-        int numericId = computeNumericId(id);
-        if (numericId == 0 || numericId == 1)
-            throw new IllegalStateException("FoxType `" + id.toString() + "` is invalid, cannot compute valid numeric id.");
-
-        return new FoxType(id, numericId, weight, inherited, natural);
+        return TYPES.stream().filter(type -> type.isCompatible(entityType)).findFirst();
     }
 
     private static int computeNumericId(int a, int b)
@@ -280,5 +309,97 @@ public class FoxType implements Identifiable
             result = computeNumericId(result, str.charAt(i));
         }
         return result;
+    }
+
+    public static class Builder
+    {
+        private final @NotNull Identifier                      id;
+        private final          int                             weight;
+        private final          boolean                         natural;
+        private @Nullable      FoxType                         inherited;
+        private                float                           scaleFactor = 1.0F;
+        private @NotNull       EntityType<? extends FoxEntity> limitedTo   = EntityType.FOX;
+        private                boolean                         bigEars     = false;
+        private                boolean                         fireImmune  = false;
+
+        public Builder(@NotNull net.minecraft.util.Identifier id, int weight, boolean natural)
+        {
+            this(new Identifier(id.getNamespace(), id.getPath()), weight, natural);
+        }
+
+        public Builder(@NotNull Identifier id, int weight, boolean natural)
+        {
+            this.id = id;
+            this.weight = weight;
+            this.natural = natural;
+        }
+
+        /**
+         * Makes the fox type inherits another fox type.
+         *
+         * @param type The type to inherit.
+         * @return The builder instance.
+         */
+        public Builder inherits(@Nullable FoxType type)
+        {
+            this.inherited = type;
+            return this;
+        }
+
+        /**
+         * Sets a specific scale factor for this fox type.
+         *
+         * @param scaleFactor The scale factor.
+         * @return The builder instance.
+         */
+        public Builder scaleFactor(float scaleFactor)
+        {
+            this.scaleFactor = scaleFactor;
+            return this;
+        }
+
+        public Builder limitedTo(@NotNull EntityType<? extends FoxEntity> type)
+        {
+            this.limitedTo = type;
+            return this;
+        }
+
+        /**
+         * Sets whether this fox type should have big ears or not.
+         *
+         * @param bigEars True if this fox type has big ears, else false.
+         * @return The builder instance.
+         */
+        public Builder bigEars(boolean bigEars)
+        {
+            this.bigEars = bigEars;
+            return this;
+        }
+
+        /**
+         * Sets whether this fox type is fire immune or not.
+         *
+         * @param fireImmune True if this fox type is fire immune, else false.
+         * @return The builder instance.
+         */
+        public Builder fireImmune(boolean fireImmune)
+        {
+            this.fireImmune = fireImmune;
+            return this;
+        }
+
+        /**
+         * Registers the fox type.
+         *
+         * @return The instance of the fox type.
+         */
+        public FoxType register()
+        {
+            int numericId = computeNumericId(id);
+            if (numericId == 0 || numericId == 1)
+                throw new IllegalStateException("FoxType `" + id.toString() + "` is invalid, cannot compute valid numeric id.");
+
+            return new FoxType(this.id, numericId, this.weight, this.inherited, this.natural, this.scaleFactor, this.limitedTo, this.bigEars, this.fireImmune);
+        }
     }
 }
