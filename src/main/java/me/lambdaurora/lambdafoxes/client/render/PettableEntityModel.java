@@ -1,10 +1,18 @@
 /*
- * Copyright © 2020 LambdAurora <aurora42lambda@gmail.com>
+ * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>
  *
- * This file is part of LambdaFoxes.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Licensed under the MIT license. For more information,
- * see the LICENSE file.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.lambdaurora.lambdafoxes.client.render;
@@ -26,7 +34,7 @@ public interface PettableEntityModel
     /**
      * Returns the tail model part.
      *
-     * @return The tail model part.
+     * @return the tail model part
      */
     @NotNull ModelPart getTail();
 
@@ -38,8 +46,8 @@ public interface PettableEntityModel
     /**
      * Animates the tail of the entity while being pet.
      *
-     * @param entity    The entity.
-     * @param tickDelta The tick delta.
+     * @param entity the entity
+     * @param tickDelta the tick delta
      */
     default void animateTailWhilePet(PettableEntity entity, float tickDelta)
     {

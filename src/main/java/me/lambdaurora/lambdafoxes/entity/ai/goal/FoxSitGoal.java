@@ -1,10 +1,18 @@
 /*
- * Copyright © 2020 LambdAurora <aurora42lambda@gmail.com>
+ * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>
  *
- * This file is part of LambdaFoxes.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Licensed under the MIT license. For more information,
- * see the LICENSE file.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.lambdaurora.lambdafoxes.entity.ai.goal;
@@ -22,9 +30,9 @@ import java.util.Optional;
 
 public class FoxSitGoal extends Goal
 {
-    private final FoxEntity       fox;
+    private final FoxEntity fox;
     private final TargetPredicate WORRIABLE_ENTITY_PREDICATE;
-    private       boolean         sleep = false;
+    private boolean sleep = false;
 
     public FoxSitGoal(@NotNull FoxEntity fox)
     {
@@ -81,15 +89,15 @@ public class FoxSitGoal extends Goal
 
     protected void updateWaitPosition()
     {
-        this.sleep = this.fox.world.isDay() && this.isAtFavoredLocation();
+        this.sleep = this.fox.getEntityWorld().isDay() && this.isAtFavoredLocation();
         this.fox.setSitting(!this.sleep);
         ((LambdaFoxEntity) this.fox).setFoxSleeping(this.sleep);
     }
 
     protected boolean isAtFavoredLocation()
     {
-        BlockPos blockPos = new BlockPos(this.fox.getX(), this.fox.getBoundingBox().maxY, this.fox.getZ());
-        return !this.fox.world.isSkyVisible(blockPos) && this.fox.getPathfindingFavor(blockPos) >= 0.0F;
+        BlockPos pos = new BlockPos(this.fox.getX(), this.fox.getBoundingBox().maxY, this.fox.getZ());
+        return !this.fox.getEntityWorld().isSkyVisible(pos) && this.fox.getPathfindingFavor(pos) >= 0.0F;
     }
 
     protected boolean cannotCalmDown()

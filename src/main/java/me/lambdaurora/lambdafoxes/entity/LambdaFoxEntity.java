@@ -1,10 +1,18 @@
 /*
- * Copyright © 2020 LambdAurora <aurora42lambda@gmail.com>
+ * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>
  *
- * This file is part of LambdaFoxes.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Licensed under the MIT license. For more information,
- * see the LICENSE file.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.lambdaurora.lambdafoxes.entity;
@@ -36,35 +44,35 @@ public interface LambdaFoxEntity extends TrustEntity, PettableEntity
     /**
      * Returns the type of this fox.
      *
-     * @return The type of the fox.
+     * @return the type of the fox
      */
     FoxType getFoxType();
 
     /**
      * Sets the type of this fox.
      *
-     * @param type The type of the fox.
+     * @param type the type of the fox
      */
     void setFoxType(@NotNull FoxType type);
 
     /**
      * Sets whether this fox is sleeping.
      *
-     * @param sleeping True if the fox is sleeping, else false.
+     * @param sleeping {@code true} if the fox is sleeping, else {@code false}
      */
     void setFoxSleeping(boolean sleeping);
 
     /**
      * Sets whether this fox is aggressive.
      *
-     * @param aggressive True if the fox is aggressive, else false.
+     * @param aggressive {@code true} if the fox is aggressive, else {@code false}
      */
     void setFoxAggressive(boolean aggressive);
 
     /**
      * Returns this fox's armor item.
      *
-     * @return This fox's armor item.
+     * @return this fox's armor item
      */
     @NotNull ItemStack getFoxArmor();
 
@@ -78,7 +86,7 @@ public interface LambdaFoxEntity extends TrustEntity, PettableEntity
     /**
      * Returns the tail angle of this fox.
      *
-     * @return The tail angle of the fox.
+     * @return the tail angle of the fox
      */
     @Environment(EnvType.CLIENT)
     float getTailAngle();
@@ -86,17 +94,15 @@ public interface LambdaFoxEntity extends TrustEntity, PettableEntity
     /**
      * Returns the appreciation of this fox.
      *
-     * @return The appreciation of the fox.
+     * @return the appreciation of the fox
      */
-    @Environment(EnvType.SERVER)
     float getAppreciation();
 
     /**
      * Sets the appreciation of this fox.
      *
-     * @param appreciation The appreciation of the fox.
+     * @param appreciation the appreciation of the fox
      */
-    @Environment(EnvType.SERVER)
     void setAppreciation(float appreciation);
 
     static boolean canSpawn(EntityType<FoxEntity> fox, WorldAccess world, SpawnReason reason, BlockPos pos, Random random)

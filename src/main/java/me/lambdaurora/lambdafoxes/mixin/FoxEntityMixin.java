@@ -1,10 +1,18 @@
 /*
- * Copyright © 2020 LambdAurora <aurora42lambda@gmail.com>
+ * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>
  *
- * This file is part of LambdaFoxes.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Licensed under the MIT license. For more information,
- * see the LICENSE file.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.lambdaurora.lambdafoxes.mixin;
@@ -39,10 +47,11 @@ import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.LocalDifficulty;
+import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import org.aperlambda.lambdacommon.utils.function.Predicates;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -97,7 +106,7 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     protected abstract boolean canTrust(UUID uuid);
 
     private boolean waiting;
-    private float   appreciation;
+    private float appreciation;
 
     protected FoxEntityMixin(EntityType<? extends AnimalEntity> entityType, World world)
     {
@@ -140,7 +149,8 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
                     shift = At.Shift.AFTER
             )
     )
-    private void onInitialize(WorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, EntityData entityData, CompoundTag entityTag, CallbackInfoReturnable<EntityData> cir)
+    private void onInitialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason,
+                              @Nullable EntityData entityData, @Nullable CompoundTag entityTag, CallbackInfoReturnable<EntityData> cir)
     {
         // Me: Can I have registry?
         // Mojang: no, we already have that at home
@@ -149,7 +159,7 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Inject(method = "createChild", at = @At("TAIL"), cancellable = true)
-    private void onCreateChild(@NotNull PassiveEntity mate, CallbackInfoReturnable<FoxEntity> cir)
+    private void onCreateChild(ServerWorld world, @NotNull PassiveEntity mate, CallbackInfoReturnable<FoxEntity> cir)
     {
         FoxEntity child = cir.getReturnValue();
 

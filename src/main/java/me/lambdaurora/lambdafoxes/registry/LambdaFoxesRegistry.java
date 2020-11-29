@@ -1,10 +1,18 @@
 /*
- * Copyright © 2020 LambdAurora <aurora42lambda@gmail.com>
+ * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>
  *
- * This file is part of LambdaFoxes.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Licensed under the MIT license. For more information,
- * see the LICENSE file.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.lambdaurora.lambdafoxes.registry;
@@ -29,15 +37,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class LambdaFoxesRegistry
 {
-    public static final TrackedData<Integer> FOX_TRUST_LEVEL  = DataTracker.registerData(FoxEntity.class, TrackedDataHandlerRegistry.INTEGER);
-    public static final TrackedData<Boolean> FOX_PET_STATUS   = DataTracker.registerData(FoxEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public static final TrackedData<Integer> FOX_TRUST_LEVEL = DataTracker.registerData(FoxEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    public static final TrackedData<Boolean> FOX_PET_STATUS = DataTracker.registerData(FoxEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Integer> FOX_PET_COOLDOWN = DataTracker.registerData(FoxEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
-    public static final DyeableFoxArmorItem LEATHER_FOX_ARMOR   = register("leather_fox_armor", new DyeableFoxArmorItem("leather", 3, false));
-    public static final FoxArmorItem        IRON_FOX_ARMOR      = register("iron_fox_armor", new FoxArmorItem("iron", 5, false));
-    public static final FoxArmorItem        GOLDEN_FOX_ARMOR    = register("golden_fox_armor", new FoxArmorItem("golden", 7, false));
-    public static final FoxArmorItem        DIAMOND_FOX_ARMOR   = register("diamond_fox_armor", new FoxArmorItem("diamond", 11, false));
-    public static final FoxArmorItem        NETHERITE_FOX_ARMOR = register("netherite_fox_armor", new FoxArmorItem("netherite", 15, true));
+    public static final DyeableFoxArmorItem LEATHER_FOX_ARMOR = register("leather_fox_armor", new DyeableFoxArmorItem("leather", 3, false));
+    public static final FoxArmorItem IRON_FOX_ARMOR = register("iron_fox_armor", new FoxArmorItem("iron", 5, false));
+    public static final FoxArmorItem GOLDEN_FOX_ARMOR = register("golden_fox_armor", new FoxArmorItem("golden", 7, false));
+    public static final FoxArmorItem DIAMOND_FOX_ARMOR = register("diamond_fox_armor", new FoxArmorItem("diamond", 11, false));
+    public static final FoxArmorItem NETHERITE_FOX_ARMOR = register("netherite_fox_armor", new FoxArmorItem("netherite", 15, true));
 
     public static void init()
     {
@@ -46,6 +54,6 @@ public class LambdaFoxesRegistry
 
     private static <T extends Item> T register(@NotNull String name, @NotNull T item)
     {
-        return Registry.register(Registry.ITEM, LambdaFoxes.mc(name), item);
+        return Registry.register(Registry.ITEM, LambdaFoxes.id(name), item);
     }
 }

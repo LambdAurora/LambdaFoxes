@@ -1,10 +1,18 @@
 /*
- * Copyright © 2020 LambdAurora <aurora42lambda@gmail.com>
+ * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>
  *
- * This file is part of LambdaFoxes.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Licensed under the MIT license. For more information,
- * see the LICENSE file.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.lambdaurora.lambdafoxes.registry;
@@ -14,9 +22,9 @@ import me.lambdaurora.lambdafoxes.tag.BiomeTags;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.FoxEntity;
 import net.minecraft.tag.Tag;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
-import org.aperlambda.lambdacommon.Identifier;
-import org.aperlambda.lambdacommon.utils.Identifiable;
+import org.aperlambda.lambdacommon.utils.Nameable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,13 +38,13 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class FoxType implements Identifiable
+public class FoxType implements Nameable
 {
     private static final List<FoxType> TYPES = new ArrayList<>();
 
     /* Default Minecraft fox types */
 
-    public static final FoxType RED  = new FoxType(new Identifier("minecraft", "red"), 0, 8, null, true, 1.0F, EntityType.FOX, false, false)
+    public static final FoxType RED = new FoxType(new Identifier("minecraft", "red"), 0, 8, null, true, 1.0F, EntityType.FOX, false, false)
     {
         @Override
         public String getKey()
@@ -59,24 +67,24 @@ public class FoxType implements Identifiable
         }
     };
 
-    public static final FoxType SILVER   = new Builder(LambdaFoxes.id("silver"), 4, true).inherits(RED).register();
-    public static final FoxType CROSS    = new Builder(LambdaFoxes.id("cross"), 5, true).inherits(RED).register();
+    public static final FoxType SILVER = new Builder(LambdaFoxes.id("silver"), 4, true).inherits(RED).register();
+    public static final FoxType CROSS = new Builder(LambdaFoxes.id("cross"), 5, true).inherits(RED).register();
     public static final FoxType PLATINUM = new Builder(LambdaFoxes.id("platinum"), 3, true).inherits(RED).register();
-    public static final FoxType MARBLE   = new Builder(LambdaFoxes.id("marble"), 2, false).inherits(RED).register();
-    public static final FoxType WHITE    = new Builder(LambdaFoxes.id("white"), 2, true).inherits(RED).register();
+    public static final FoxType MARBLE = new Builder(LambdaFoxes.id("marble"), 2, false).inherits(RED).register();
+    public static final FoxType WHITE = new Builder(LambdaFoxes.id("white"), 2, true).inherits(RED).register();
 
-    public static final FoxType FENNEC = new Builder(LambdaFoxes.id("fennec"), 8, true).scaleFactor(0.8f).bigEars(true).register();
+    public static final FoxType FENNEC = new Builder(LambdaFoxes.id("fennec"), 8, true).scaleFactor(0.8f).bigEars().register();
 
-    private final Identifier                      id;
-    private final int                             numericId;
-    public final  int                             weight;
-    public final  Optional<FoxType>               inherited;
-    public final  boolean                         natural;
-    public final  Tag.Identified<Biome>           biomes;
-    public final  float                           scaleFactor;
-    public final  EntityType<? extends FoxEntity> limitedTo;
-    public final  boolean                         bigEars;
-    public final  boolean                         fireImmune;
+    private final Identifier id;
+    private final int numericId;
+    public final int weight;
+    public final Optional<FoxType> inherited;
+    public final boolean natural;
+    public final Tag.Identified<Biome> biomes;
+    public final float scaleFactor;
+    public final EntityType<? extends FoxEntity> limitedTo;
+    public final boolean bigEars;
+    public final boolean fireImmune;
 
     private FoxType(@NotNull Identifier id, int numericId, int weight, @Nullable FoxType inherited, boolean natural, float scaleFactor, @NotNull EntityType<? extends FoxEntity> limitedTo, boolean bigEars, boolean fireImmune)
     {
@@ -92,7 +100,7 @@ public class FoxType implements Identifiable
             String biomeNamespace = id.getNamespace();
             if (biomeNamespace.equalsIgnoreCase("minecraft"))
                 biomeNamespace = LambdaFoxes.MODID;
-            this.biomes = BiomeTags.register(new Identifier(biomeNamespace, "fox_spawn/" + id.getName()));
+            this.biomes = BiomeTags.register(new Identifier(biomeNamespace, "fox_spawn/" + id.getPath()));
         }
 
         this.scaleFactor = scaleFactor;
@@ -103,16 +111,21 @@ public class FoxType implements Identifiable
         TYPES.add(this);
     }
 
-    @Override
     public @NotNull Identifier getIdentifier()
     {
         return this.id;
     }
 
+    @Override
+    public @NotNull String getName()
+    {
+        return this.id.getPath();
+    }
+
     /**
      * Returns the fox type key.
      *
-     * @return The fox type key.
+     * @return the fox type key
      */
     public String getKey()
     {
@@ -122,7 +135,7 @@ public class FoxType implements Identifiable
     /**
      * Returns the numeric id of this fox type.
      *
-     * @return The fox type numeric id.
+     * @return the fox type numeric id
      */
     public int getNumericId()
     {
@@ -132,7 +145,7 @@ public class FoxType implements Identifiable
     /**
      * Returns the probability weight. Greater is the weight, more chances there is for that type to spawn.
      *
-     * @return The probability weight.
+     * @return the probability weight
      */
     public int getWeight()
     {
@@ -142,7 +155,7 @@ public class FoxType implements Identifiable
     /**
      * Returns whether this fox type is a mutated variation.
      *
-     * @return True if this fox type is a mutated variation, else false.
+     * @return {@code true} if this fox type is a mutated variation, else {@code false}
      */
     public boolean isMutated()
     {
@@ -152,8 +165,8 @@ public class FoxType implements Identifiable
     /**
      * Returns whether this fox type is compatible with the specified entity type.
      *
-     * @param type The entity type.
-     * @return True if this fox type is compatible with the entity type.
+     * @param type the entity type
+     * @return true if this fox type is compatible with the entity type
      */
     public boolean isCompatible(EntityType<? extends FoxEntity> type)
     {
@@ -163,8 +176,8 @@ public class FoxType implements Identifiable
     /**
      * Returns the texture identifier.
      *
-     * @param entity The entity.
-     * @return The texture identifier.
+     * @param entity the entity
+     * @return the texture identifier
      */
     public net.minecraft.util.Identifier getTextureId(@NotNull FoxEntity entity)
     {
@@ -177,9 +190,9 @@ public class FoxType implements Identifiable
     /**
      * Rolls the fox type for the specified biome.
      *
-     * @param random Random.
-     * @param biome  The biome.
-     * @return The chosen fox type.
+     * @param random random
+     * @param biome the biome
+     * @return the chosen fox type
      */
     public static @NotNull FoxType rollFoxType(@NotNull Random random, @NotNull Biome biome)
     {
@@ -236,8 +249,8 @@ public class FoxType implements Identifiable
     /**
      * Returns the fox type associated to the identifier.
      *
-     * @param id The string identifier.
-     * @return The associated fox type.
+     * @param id the string identifier
+     * @return the associated fox type
      */
     public static @NotNull FoxType fromId(@NotNull String id)
     {
@@ -255,8 +268,8 @@ public class FoxType implements Identifiable
     /**
      * Returns the fox type associated to the identifier.
      *
-     * @param id The identifier.
-     * @return The associated fox type.
+     * @param id the identifier
+     * @return the associated fox type
      */
     public static @NotNull FoxType fromId(@NotNull Identifier id)
     {
@@ -266,21 +279,10 @@ public class FoxType implements Identifiable
     }
 
     /**
-     * Returns the fox type associated to the identifier.
-     *
-     * @param id The identifier.
-     * @return The associated fox type.
-     */
-    public static @NotNull FoxType fromId(@NotNull net.minecraft.util.Identifier id)
-    {
-        return fromId(new Identifier(id.getNamespace(), id.getPath()));
-    }
-
-    /**
      * Returns the fox type associated to the numeric id.
      *
-     * @param id The numeric id.
-     * @return The associated fox type.
+     * @param id the numeric id
+     * @return the associated fox type
      */
     public static @NotNull FoxType fromNumericId(int id)
     {
@@ -296,7 +298,8 @@ public class FoxType implements Identifiable
 
     private static int computeNumericId(int a, int b)
     {
-        return ((a + b) ^ 2 + 3 * a + b) / 2;
+        int sum = (a + b);
+        return (sum * sum + 3 * a + b) / 2;
     }
 
     private static int computeNumericId(@NotNull Identifier id)
@@ -313,19 +316,14 @@ public class FoxType implements Identifiable
 
     public static class Builder
     {
-        private final @NotNull Identifier                      id;
-        private final          int                             weight;
-        private final          boolean                         natural;
-        private @Nullable      FoxType                         inherited;
-        private                float                           scaleFactor = 1.0F;
-        private @NotNull       EntityType<? extends FoxEntity> limitedTo   = EntityType.FOX;
-        private                boolean                         bigEars     = false;
-        private                boolean                         fireImmune  = false;
-
-        public Builder(@NotNull net.minecraft.util.Identifier id, int weight, boolean natural)
-        {
-            this(new Identifier(id.getNamespace(), id.getPath()), weight, natural);
-        }
+        private final @NotNull Identifier id;
+        private final int weight;
+        private final boolean natural;
+        private @Nullable FoxType inherited;
+        private float scaleFactor = 1.0F;
+        private @NotNull EntityType<? extends FoxEntity> limitedTo = EntityType.FOX;
+        private boolean bigEars = false;
+        private boolean fireImmune = false;
 
         public Builder(@NotNull Identifier id, int weight, boolean natural)
         {
@@ -337,8 +335,8 @@ public class FoxType implements Identifiable
         /**
          * Makes the fox type inherits another fox type.
          *
-         * @param type The type to inherit.
-         * @return The builder instance.
+         * @param type the type to inherit
+         * @return the builder instance
          */
         public Builder inherits(@Nullable FoxType type)
         {
@@ -349,8 +347,8 @@ public class FoxType implements Identifiable
         /**
          * Sets a specific scale factor for this fox type.
          *
-         * @param scaleFactor The scale factor.
-         * @return The builder instance.
+         * @param scaleFactor the scale factor
+         * @return the builder instance
          */
         public Builder scaleFactor(float scaleFactor)
         {
@@ -365,22 +363,21 @@ public class FoxType implements Identifiable
         }
 
         /**
-         * Sets whether this fox type should have big ears or not.
+         * Sets big ears for this fox.
          *
-         * @param bigEars True if this fox type has big ears, else false.
-         * @return The builder instance.
+         * @return the builder instance
          */
-        public Builder bigEars(boolean bigEars)
+        public Builder bigEars()
         {
-            this.bigEars = bigEars;
+            this.bigEars = true;
             return this;
         }
 
         /**
          * Sets whether this fox type is fire immune or not.
          *
-         * @param fireImmune True if this fox type is fire immune, else false.
-         * @return The builder instance.
+         * @param fireImmune {@code true} if this fox type is fire immune, else {@code false}
+         * @return the builder instance
          */
         public Builder fireImmune(boolean fireImmune)
         {
@@ -391,7 +388,7 @@ public class FoxType implements Identifiable
         /**
          * Registers the fox type.
          *
-         * @return The instance of the fox type.
+         * @return the instance of the fox type
          */
         public FoxType register()
         {

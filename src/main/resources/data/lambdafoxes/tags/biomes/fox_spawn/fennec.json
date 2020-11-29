@@ -8,8 +8,21 @@
     "minecraft:savanna_plateau",
     "minecraft:shattered_savanna",
     "minecraft:shattered_savanna_plateau",
-    "terrestria:dunes",
-    "terrestria:dunes_edge",
-    "terrestria:oasis"
+    {
+      "id": "terrestria:dunes",
+      "required": false
+    },
+    {
+      "id": "terrestria:dunes_edge",
+      "required": false
+    },
+    {
+      "id": "terrestria:oasis",
+      "required": false
+    },
+    {
+      "id": "terrestria:outback",
+      "required": false
+    }
   ]
 }

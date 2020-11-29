@@ -1,62 +1,68 @@
 /*
- * Copyright © 2020 LambdAurora <aurora42lambda@gmail.com>
+ * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>
  *
- * This file is part of LambdaFoxes.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Licensed under the MIT license. For more information,
- * see the LICENSE file.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.lambdaurora.lambdafoxes.tag;
 
 import net.minecraft.tag.Tag;
-import net.minecraft.tag.TagContainer;
+import net.minecraft.tag.TagGroup;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
-import org.aperlambda.lambdacommon.Identifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 public class BiomeTags
 {
-    private static       TagContainer<Biome> CONTAINER = new TagContainer<>((identifier) -> {
-        return Optional.empty();
-    }, "", "");
-    private static final List<CachedTag>     tags      = new ArrayList<>();
+    private static TagGroup<Biome> CONTAINER = null;
+    private static final List<CachedTag> tags = new ArrayList<>();
 
-    public static @NotNull TagContainer<Biome> getContainer()
+    public static @Nullable TagGroup<Biome> getContainer()
     {
         return CONTAINER;
     }
 
     public static Tag.Identified<Biome> register(@NotNull Identifier identifier)
     {
-        CachedTag cachedTag = new CachedTag(new net.minecraft.util.Identifier(identifier.toString()));
+        CachedTag cachedTag = new CachedTag(new Identifier(identifier.toString()));
         tags.add(cachedTag);
         return cachedTag;
     }
 
-    static void setContainer(@NotNull TagContainer<Biome> container)
+    static void setContainer(@NotNull TagGroup<Biome> container)
     {
         CONTAINER = container;
-        tags.parallelStream().forEach(tag -> tag.update(container::get));
+        tags.parallelStream().forEach(tag -> tag.update(container::getTag));
     }
 
     static class CachedTag implements Tag.Identified<Biome>
     {
-        protected final net.minecraft.util.Identifier id;
-        private         Tag<Biome>                    currentTag;
+        protected final Identifier id;
+        private Tag<Biome> currentTag;
 
-        CachedTag(net.minecraft.util.Identifier id)
+        CachedTag(Identifier id)
         {
             this.id = id;
         }
 
         @Override
-        public net.minecraft.util.Identifier getId()
+        public Identifier getId()
         {
             return this.id;
         }
@@ -70,7 +76,7 @@ public class BiomeTags
             }
         }
 
-        void update(Function<net.minecraft.util.Identifier, Tag<Biome>> tagFactory)
+        void update(Function<Identifier, Tag<Biome>> tagFactory)
         {
             this.currentTag = tagFactory.apply(this.id);
         }

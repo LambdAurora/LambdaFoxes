@@ -1,10 +1,18 @@
 /*
- * Copyright © 2020 LambdAurora <aurora42lambda@gmail.com>
+ * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>
  *
- * This file is part of LambdaFoxes.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Licensed under the MIT license. For more information,
- * see the LICENSE file.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.lambdaurora.lambdafoxes.item;
@@ -21,17 +29,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public class FoxArmorItem extends Item
 {
-    public final int        bonus;
+    public final int bonus;
     public final Identifier entityTexture;
 
     public FoxArmorItem(@NotNull String name, int bonus, boolean fireproof)
     {
         super(fireproof(new Item.Settings().maxCount(1).group(ItemGroup.MISC), fireproof));
         this.bonus = bonus;
-        this.entityTexture = LambdaFoxes.mc("textures/entity/fox/armor/" + name + "_fox_armor.png");
+        this.entityTexture = LambdaFoxes.id("textures/entity/fox/armor/" + name + "_fox_armor.png");
     }
 
-    public int getBonus(@NotNull ItemStack stack) {
+    public int getBonus(@NotNull ItemStack stack)
+    {
         return this.bonus;
     }
 
