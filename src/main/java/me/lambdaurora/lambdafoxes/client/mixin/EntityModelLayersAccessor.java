@@ -17,20 +17,17 @@
 
 package me.lambdaurora.lambdafoxes.client.mixin;
 
-import it.unimi.dsi.fastutil.objects.ObjectList;
-import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.render.entity.model.EntityModelLayer;
+import net.minecraft.client.render.entity.model.EntityModelLayers;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
-@Mixin(ModelPart.class)
-public interface ModelPartAccessor
-{
-    @Accessor("cuboids")
-    List<ModelPart.Cuboid> lambdafoxes_getCuboids();
-
-    @Accessor("children")
-    Map<String, ModelPart> lambdafoxes_getChildren();
+@Mixin(EntityModelLayers.class)
+public interface EntityModelLayersAccessor {
+    @Accessor("LAYERS")
+    static Set<EntityModelLayer> getLayers() {
+        throw new IllegalStateException("Accessor failed to apply.");
+    }
 }

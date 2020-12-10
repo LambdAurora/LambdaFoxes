@@ -17,14 +17,12 @@
 
 package me.lambdaurora.lambdafoxes.client.render;
 
-import com.google.common.collect.ImmutableList;
-import me.lambdaurora.lambdafoxes.client.mixin.ModelPartAccessor;
-import me.lambdaurora.lambdafoxes.entity.LambdaFoxEntity;
 import me.lambdaurora.lambdafoxes.entity.PettableEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.model.*;
 import net.minecraft.client.render.entity.model.FoxEntityModel;
+import net.minecraft.client.util.math.Dilation;
 import net.minecraft.entity.passive.FoxEntity;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -38,213 +36,217 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.0.0
  */
 @Environment(EnvType.CLIENT)
-public class LambdaFoxEntityModel<T extends FoxEntity> extends FoxEntityModel<T> implements PettableEntityModel
-{
-    private final ModelPart rightEar;
-    private final ModelPart leftEar;
-    private final ModelPart leftBigEar;
-    private final ModelPart rightBigEar;
-    private final ModelPart nose;
-    private final ModelPart torso;
-    private final ModelPart rightBackLeg;
-    private final ModelPart leftBackLeg;
+public class LambdaFoxEntityModel<T extends FoxEntity> extends FoxEntityModel<T> implements PettableEntityModel {
+    private final ModelPart body;
+    private final ModelPart rightHindLeg;
+    private final ModelPart leftHindLeg;
     private final ModelPart rightFrontLeg;
     private final ModelPart leftFrontLeg;
     private final ModelPart tail;
-    private final ModelPart tailCuboid;
     private float walkingAnimation;
 
-    public LambdaFoxEntityModel(float extra)
-    {
-        // Clear because super constructor.
-        ((ModelPartAccessor) this.head).lambdafoxes_getChildren().clear();
-        ((ModelPartAccessor) this.head).lambdafoxes_getCuboids().clear();
-        this.head.addCuboid(-3.0F, -2.0F, -5.0F, 8.0F, 6.0F, 6.0F, extra);
+    public LambdaFoxEntityModel(ModelPart root) {
+        super(root);
+        this.body = root.getChild("body");
+        this.rightHindLeg = root.getChild("right_hind_leg");
+        this.leftHindLeg = root.getChild("left_hind_leg");
+        this.rightFrontLeg = root.getChild("right_front_leg");
+        this.leftFrontLeg = root.getChild("left_front_leg");
+        this.tail = this.body.getChild("tail");
+    }
 
-        // Yeet everything else, time to make my own thing.
+    public static TexturedModelData getFoxModelData(Dilation extra) {
+        ModelData data = new ModelData();
+        ModelPartData root = data.getRoot();
+        ModelPartData head = root.addChild("head", ModelPartBuilder.create().uv(1, 5)
+                        .cuboid(-3.f, -2.f, -5.f, 8.f, 6.f, 6.f, extra),
+                ModelTransform.pivot(-1.f, 16.5f, -3.f));
+        head.addChild("right_ear", ModelPartBuilder.create()
+                        .uv(8, 1)
+                        .cuboid(-3.f, -4.f, -4.f, 2.f, 2.f, 1.f, extra),
+                ModelTransform.NONE);
+        head.addChild("left_ear", ModelPartBuilder.create()
+                        .uv(15, 1)
+                        .cuboid(3.f, -4.f, -4.f, 2.f, 2.f, 1.f, extra),
+                ModelTransform.NONE);
+        head.addChild("nose", ModelPartBuilder.create()
+                        .uv(6, 18)
+                        .cuboid(-1.f, 2.01f, -8.f, 4.f, 2.f, 3.f, extra),
+                ModelTransform.NONE);
+        ModelPartData body = root.addChild("body", ModelPartBuilder.create()
+                        .uv(24, 15)
+                        .cuboid(-3.f, 3.999f, -3.5f, 6.f, 11.f, 6.f, extra),
+                ModelTransform.of(0, 16.f, -6.f, 1.5707964f, 0, 0));
+        Dilation dilation = extra.add(0.001f);
+        ModelPartBuilder left_leg = ModelPartBuilder.create()
+                .uv(4, 24)
+                .cuboid(2.f, 0.5f, -1.f, 2.f, 6.f, 2.f, dilation);
+        ModelPartBuilder right_leg = ModelPartBuilder.create()
+                .uv(13, 24)
+                .cuboid(2.f, 0.5f, -1.f, 2.f, 6.f, 2.f, dilation);
+        root.addChild("right_hind_leg", right_leg, ModelTransform.pivot(-5.f, 17.5f, 7.f));
+        root.addChild("left_hind_leg", left_leg, ModelTransform.pivot(-1.f, 17.5f, 7.f));
+        root.addChild("right_front_leg", right_leg, ModelTransform.pivot(-5.f, 17.5f, 0));
+        root.addChild("left_front_leg", left_leg, ModelTransform.pivot(-1.f, 17.5f, 0));
+        ModelPartData tail = body.addChild("tail", ModelPartBuilder.create()
+                        .uv(30, 0),
+                ModelTransform.of(0.f, 15.f, -2.f, -0.05235988f, 0, 0));
+        tail.addChild("tail_data", ModelPartBuilder.create()
+                        .uv(30, 0)
+                        .cuboid(0.0F, 0.0F, -1.0F, 4.0F, 9.0F, 5.0F, extra),
+                ModelTransform.pivot(-2.f, 0, 0));
+        return TexturedModelData.of(data, 48, 32);
+    }
 
-        // Ears
-        this.leftEar = new ModelPart(this, 15, 1);
-        this.leftEar.addCuboid(3.0F, -4.0F, -4.0F, 2.0F, 2.0F, 1.0F, extra);
-        this.rightEar = new ModelPart(this, 8, 1);
-        this.rightEar.addCuboid(-3.0F, -4.0F, -4.0F, 2.0F, 2.0F, 1.0F, extra);
-
-        // Big ears
-        this.leftBigEar = new ModelPart(this, 15, 0);
-        this.leftBigEar.visible = false;
-        this.leftBigEar.yaw = 0.25f;
-        this.leftBigEar.setPivot(1.f, 0, 1.f);
-        this.leftBigEar.addCuboid(3.f, -5.f, -4.f, 3.f, 4.f, 1.f, extra);
-
-        this.rightBigEar = new ModelPart(this, 7, 0);
-        this.rightBigEar.visible = false;
-        this.rightBigEar.yaw = -0.25f;
-        this.rightBigEar.setPivot(-.9f, 0, 0.50f);
-        this.rightBigEar.addCuboid(-4.f, -5.f, -4.f, 3.f, 4.f, 1.f, extra);
-
-        // Nose to boop
-        this.nose = new ModelPart(this, 6, 18);
-        this.nose.addCuboid(-1.0F, 2.01F, -8.0F, 4.0F, 2.0F, 3.0F, extra);
-
-        this.head.addChild(this.leftEar);
-        this.head.addChild(this.rightEar);
-        this.head.addChild(this.leftBigEar);
-        this.head.addChild(this.rightBigEar);
-        this.head.addChild(this.nose);
-
-        // Torso
-        this.torso = new ModelPart(this, 24, 15);
-        this.torso.addCuboid(-3.0F, 3.999F, -3.5F, 6.0F, 11.0F, 6.0F, extra);
-        this.torso.setPivot(0.0F, 16.0F, -6.0F);
-
-        // Legs
-        this.rightBackLeg = new ModelPart(this, 13, 24);
-        this.rightBackLeg.addCuboid(2.0F, 0.5F, -1.0F, 2.0F, 6.0F, 2.0F, extra + 0.001F);
-        this.rightBackLeg.setPivot(-5.0F, 17.5F, 7.0F);
-        this.leftBackLeg = new ModelPart(this, 4, 24);
-        this.leftBackLeg.addCuboid(2.0F, 0.5F, -1.0F, 2.0F, 6.0F, 2.0F, extra + 0.001F);
-        this.leftBackLeg.setPivot(-1.0F, 17.5F, 7.0F);
-        this.rightFrontLeg = new ModelPart(this, 13, 24);
-        this.rightFrontLeg.addCuboid(2.0F, 0.5F, -1.0F, 2.0F, 6.0F, 2.0F, extra + 0.001F);
-        this.rightFrontLeg.setPivot(-5.0F, 17.5F, 0.0F);
-        this.leftFrontLeg = new ModelPart(this, 4, 24);
-        this.leftFrontLeg.addCuboid(2.0F, 0.5F, -1.0F, 2.0F, 6.0F, 2.0F, extra + 0.001F);
-        this.leftFrontLeg.setPivot(-1.0F, 17.5F, 0.0F);
-
-        // Tail
-        this.tail = new ModelPart(this, 24, 24);
-        this.tailCuboid = new ModelPart(this, 30, 0);
-        this.resetTailPivot();
-        this.tailCuboid.addCuboid(0.0F, 0.0F, -1.0F, 4.0F, 9.0F, 5.0F, extra);
-        this.tail.addChild(this.tailCuboid);
-        this.torso.addChild(this.tail);
+    public static TexturedModelData getFennecModelData(Dilation extra) {
+        ModelData data = new ModelData();
+        ModelPartData root = data.getRoot();
+        ModelPartData head = root.addChild("head", ModelPartBuilder.create().uv(1, 5)
+                        .cuboid(-3.f, -2.f, -5.f, 8.f, 6.f, 6.f, extra),
+                ModelTransform.pivot(-1.f, 16.5f, -3.f));
+        head.addChild("right_ear", ModelPartBuilder.create()
+                        .uv(8, 1)
+                        .cuboid(-4.f, -5.f, -4.f, 3.f, 4.f, 1.f, extra),
+                ModelTransform.of(-.9f, 0, .5f, 0, -.25f, 0));
+        head.addChild("left_ear", ModelPartBuilder.create()
+                        .uv(15, 1)
+                        .cuboid(3.f, -5.f, -4.f, 3.f, 4.f, 1.f, extra),
+                ModelTransform.of(1.f, 0, 1.f, 0, .25f, 0));
+        head.addChild("nose", ModelPartBuilder.create()
+                        .uv(6, 18)
+                        .cuboid(-1.f, 2.01f, -8.f, 4.f, 2.f, 3.f, extra),
+                ModelTransform.NONE);
+        ModelPartData body = root.addChild("body", ModelPartBuilder.create()
+                        .uv(24, 15)
+                        .cuboid(-3.f, 3.999f, -3.5f, 6.f, 11.f, 6.f, extra),
+                ModelTransform.of(0, 16.f, -6.f, 1.5707964f, 0, 0));
+        Dilation dilation = extra.add(0.001f);
+        ModelPartBuilder left_leg = ModelPartBuilder.create()
+                .uv(4, 24)
+                .cuboid(2.f, 0.5f, -1.f, 2.f, 6.f, 2.f, dilation);
+        ModelPartBuilder right_leg = ModelPartBuilder.create()
+                .uv(13, 24)
+                .cuboid(2.f, 0.5f, -1.f, 2.f, 6.f, 2.f, dilation);
+        root.addChild("right_hind_leg", right_leg, ModelTransform.pivot(-5.f, 17.5f, 7.f));
+        root.addChild("left_hind_leg", left_leg, ModelTransform.pivot(-1.f, 17.5f, 7.f));
+        root.addChild("right_front_leg", right_leg, ModelTransform.pivot(-5.f, 17.5f, 0));
+        root.addChild("left_front_leg", left_leg, ModelTransform.pivot(-1.f, 17.5f, 0));
+        ModelPartData tail = body.addChild("tail", ModelPartBuilder.create()
+                        .uv(30, 0),
+                ModelTransform.of(0.f, 15.f, -2.f, -0.05235988f, 0, 0));
+        tail.addChild("tail_data", ModelPartBuilder.create()
+                        .uv(30, 0)
+                        .cuboid(0.0F, 0.0F, -1.0F, 4.0F, 9.0F, 5.0F, extra),
+                ModelTransform.pivot(-2.f, 0, 0));
+        return TexturedModelData.of(data, 48, 32);
     }
 
     @Override
-    protected Iterable<ModelPart> getBodyParts()
-    {
-        return ImmutableList.of(this.torso, this.rightBackLeg, this.leftBackLeg, this.rightFrontLeg, this.leftFrontLeg);
-    }
-
-    @Override
-    public @NotNull ModelPart getTail()
-    {
+    public @NotNull ModelPart getTail() {
         return this.tail;
     }
 
-    /**
-     * Resets the tail pivot.
-     */
     @Override
-    public void resetTailPivot()
-    {
-        this.tail.setPivot(0.f, 15.f, -2.f);
-        this.tailCuboid.setPivot(-2.f, 0.f, 0.f);
-    }
-
-    @Override
-    public void animateModel(T fox, float limbAngle, float limbDistance, float tickDelta)
-    {
-        this.torso.pitch = 1.5707964F;
-        this.tail.pitch = -0.05235988F;
-        this.rightBackLeg.pitch = MathHelper.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
-        this.leftBackLeg.pitch = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
-        this.rightFrontLeg.pitch = MathHelper.cos(limbAngle * 0.6662F + 3.1415927F) * 1.4F * limbDistance;
-        this.leftFrontLeg.pitch = MathHelper.cos(limbAngle * 0.6662F) * 1.4F * limbDistance;
-        this.head.setPivot(-1.0F, 16.5F, -3.0F);
-        this.head.yaw = 0.0F;
+    public void animateModel(T fox, float limbAngle, float limbDistance, float tickDelta) {
+        this.body.pitch = 1.5707964f;
+        this.tail.pitch = -0.05235988f;
+        this.rightHindLeg.pitch = MathHelper.cos(limbAngle * 0.6662f) * 1.4f * limbDistance;
+        this.leftHindLeg.pitch = MathHelper.cos(limbAngle * 0.6662f + 3.1415927f) * 1.4f * limbDistance;
+        this.rightFrontLeg.pitch = MathHelper.cos(limbAngle * 0.6662f + 3.1415927f) * 1.4f * limbDistance;
+        this.leftFrontLeg.pitch = MathHelper.cos(limbAngle * 0.6662f) * 1.4f * limbDistance;
+        this.head.setPivot(-1.f, 16.5f, -3.f);
+        this.head.yaw = 0;
         this.head.roll = fox.getHeadRoll(tickDelta);
-        this.rightBackLeg.visible = true;
-        this.leftBackLeg.visible = true;
+        this.rightHindLeg.visible = true;
+        this.leftHindLeg.visible = true;
         this.rightFrontLeg.visible = true;
         this.leftFrontLeg.visible = true;
-        this.torso.setPivot(0.0F, 16.0F, -6.0F);
-        this.torso.roll = 0.0F;
-        this.rightBackLeg.setPivot(-5.0F, 17.5F, 7.0F);
-        this.leftBackLeg.setPivot(-1.0F, 17.5F, 7.0F);
+        this.body.setPivot(0, 16.f, -6.f);
+        this.body.roll = 0;
+        this.rightHindLeg.setPivot(-5.f, 17.5f, 7.f);
+        this.leftHindLeg.setPivot(-1.f, 17.5f, 7.f);
         if (fox.isInSneakingPose()) {
-            this.torso.pitch = 1.6755161F;
+            this.body.pitch = 1.6755161f;
             float i = fox.getBodyRotationHeightOffset(tickDelta);
-            this.torso.setPivot(0.0F, 16.0F + fox.getBodyRotationHeightOffset(tickDelta), -6.0F);
-            this.head.setPivot(-1.0F, 16.5F + i, -3.0F);
-            this.head.yaw = 0.0F;
+            this.body.setPivot(0, 16.f + fox.getBodyRotationHeightOffset(tickDelta), -6.f);
+            this.head.setPivot(-1.f, 16.5f + i, -3.f);
+            this.head.yaw = 0;
         } else if (fox.isSleeping()) {
-            this.torso.roll = -1.5707964F;
-            this.torso.setPivot(0.0F, 21.0F, -6.0F);
-            this.tail.pitch = -2.6179938F;
+            this.body.roll = -1.5707964f;
+            this.body.setPivot(0, 21.f, -6.f);
+            this.tail.pitch = -2.6179938f;
             if (this.child) {
-                this.tail.pitch = -2.1816616F;
-                this.torso.setPivot(0.0F, 21.0F, -2.0F);
+                this.tail.pitch = -2.1816616f;
+                this.body.setPivot(0, 21.f, -2.f);
             }
 
-            this.head.setPivot(1.0F, 19.49F, -3.0F);
-            this.head.pitch = 0.0F;
-            this.head.yaw = -2.0943952F;
-            this.head.roll = 0.0F;
-            this.rightBackLeg.visible = false;
-            this.leftBackLeg.visible = false;
+            this.head.setPivot(1.f, 19.49f, -3.f);
+            this.head.pitch = 0;
+            this.head.yaw = -2.0943952f;
+            this.head.roll = 0;
+            this.rightHindLeg.visible = false;
+            this.leftHindLeg.visible = false;
             this.rightFrontLeg.visible = false;
             this.leftFrontLeg.visible = false;
         } else if (fox.isSitting()) {
-            this.torso.pitch = 0.5235988F;
-            this.torso.setPivot(0.0F, 9.0F, -3.0F);
-            this.tail.pitch = 0.7853982F;
-            this.head.setPivot(-1.0F, 10.0F, -0.25F);
-            this.head.pitch = 0.0F;
-            this.head.yaw = 0.0F;
+            this.body.pitch = 0.5235988f;
+            this.body.setPivot(0, 9.f, -3.f);
+            this.tail.pitch = 0.7853982f;
+            this.head.setPivot(-1.f, 10, -0.25f);
+            this.head.pitch = 0;
+            this.head.yaw = 0;
             if (this.child) {
-                this.head.setPivot(-1.0F, 13.0F, -3.75F);
+                this.head.setPivot(-1.f, 13.f, -3.75f);
             }
 
-            this.rightBackLeg.pitch = -1.3089969F;
-            this.rightBackLeg.setPivot(-5.0F, 21.5F, 6.75F);
-            this.leftBackLeg.pitch = -1.3089969F;
-            this.leftBackLeg.setPivot(-1.0F, 21.5F, 6.75F);
-            this.rightFrontLeg.pitch = -0.2617994F;
-            this.leftFrontLeg.pitch = -0.2617994F;
+            this.rightHindLeg.pitch = -1.3089969f;
+            this.rightHindLeg.setPivot(-5.f, 21.5f, 6.75f);
+            this.leftHindLeg.pitch = -1.3089969f;
+            this.leftHindLeg.setPivot(-1.f, 21.5f, 6.75f);
+            this.rightFrontLeg.pitch = -0.2617994f;
+            this.leftFrontLeg.pitch = -0.2617994f;
         }
 
         this.animateTailWhilePet((PettableEntity) fox, tickDelta);
 
         // Ears.
-        boolean bigEars = ((LambdaFoxEntity) fox).getFoxType().bigEars;
+        /*boolean bigEars = ((LambdaFoxEntity) fox).getFoxType().bigEars;
         this.leftBigEar.visible = bigEars;
         this.leftEar.visible = !bigEars;
 
         this.rightBigEar.visible = bigEars;
-        this.rightEar.visible = !bigEars;
+        this.rightEar.visible = !bigEars;*/
     }
 
     @Override
-    public void setAngles(T fox, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch)
-    {
+    public void setAngles(T fox, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
         if (!fox.isSleeping() && !fox.isWalking() && !fox.isInSneakingPose()) {
-            this.head.pitch = headPitch * 0.017453292F;
-            this.head.yaw = headYaw * 0.017453292F;
+            this.head.pitch = headPitch * 0.017453292f;
+            this.head.yaw = headYaw * 0.017453292f;
         }
 
         if (fox.isSleeping()) {
-            this.head.pitch = 0.0F;
-            this.head.yaw = -2.0943952F;
-            this.head.roll = MathHelper.cos(animationProgress * 0.027F) / 22.0F;
+            this.head.pitch = 0;
+            this.head.yaw = -2.0943952f;
+            this.head.roll = MathHelper.cos(animationProgress * 0.027f) / 22.f;
         }
 
         float l;
         if (fox.isInSneakingPose()) {
-            l = MathHelper.cos(animationProgress) * 0.01F;
-            this.torso.yaw = l;
-            this.rightBackLeg.roll = l;
-            this.leftBackLeg.roll = l;
-            this.rightFrontLeg.roll = l / 2.0F;
-            this.leftFrontLeg.roll = l / 2.0F;
+            l = MathHelper.cos(animationProgress) * 0.01f;
+            this.body.yaw = l;
+            this.rightHindLeg.roll = l;
+            this.leftHindLeg.roll = l;
+            this.rightFrontLeg.roll = l / 2.f;
+            this.leftFrontLeg.roll = l / 2.f;
         }
 
         if (fox.isWalking()) {
-            this.walkingAnimation += 0.67F;
-            this.rightBackLeg.pitch = MathHelper.cos(this.walkingAnimation * 0.4662F) * 0.1F;
-            this.leftBackLeg.pitch = MathHelper.cos(this.walkingAnimation * 0.4662F + 3.1415927F) * 0.1F;
-            this.rightFrontLeg.pitch = MathHelper.cos(this.walkingAnimation * 0.4662F + 3.1415927F) * 0.1F;
-            this.leftFrontLeg.pitch = MathHelper.cos(this.walkingAnimation * 0.4662F) * 0.1F;
+            this.walkingAnimation += 0.67f;
+            this.rightHindLeg.pitch = MathHelper.cos(this.walkingAnimation * 0.4662f) * 0.1f;
+            this.leftHindLeg.pitch = MathHelper.cos(this.walkingAnimation * 0.4662f + 3.1415927f) * 0.1f;
+            this.rightFrontLeg.pitch = MathHelper.cos(this.walkingAnimation * 0.4662f + 3.1415927f) * 0.1f;
+            this.leftFrontLeg.pitch = MathHelper.cos(this.walkingAnimation * 0.4662f) * 0.1f;
         }
 
         this.tail.pitch = animationProgress;

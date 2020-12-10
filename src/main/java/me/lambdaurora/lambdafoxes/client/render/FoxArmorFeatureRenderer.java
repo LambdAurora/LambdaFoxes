@@ -19,6 +19,7 @@ package me.lambdaurora.lambdafoxes.client.render;
 
 import me.lambdaurora.lambdafoxes.entity.LambdaFoxEntity;
 import me.lambdaurora.lambdafoxes.item.FoxArmorItem;
+import me.lambdaurora.lambdafoxes.registry.FoxType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.OverlayTexture;
@@ -35,19 +36,21 @@ import net.minecraft.item.DyeableItem;
 import net.minecraft.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
-public class FoxArmorFeatureRenderer extends FeatureRenderer<FoxEntity, FoxEntityModel<FoxEntity>>
-{
+public class FoxArmorFeatureRenderer extends FeatureRenderer<FoxEntity, FoxEntityModel<FoxEntity>> {
     @SuppressWarnings("unchecked")
-    private final LambdaFoxEntityModel<FoxEntity> model = new LambdaFoxEntityModel<>(.25f);
+    private final FoxType type;
+    private final LambdaFoxEntityModel<FoxEntity> model;// = new LambdaFoxEntityModel(.25f);
 
-    public FoxArmorFeatureRenderer(FeatureRendererContext<FoxEntity, FoxEntityModel<FoxEntity>> context)
-    {
+    public FoxArmorFeatureRenderer(FeatureRendererContext<FoxEntity, FoxEntityModel<FoxEntity>> context, FoxType type, LambdaFoxEntityModel<FoxEntity> model) {
         super(context);
+        this.type = type;
+        this.model = model;
     }
 
     @Override
-    public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, FoxEntity fox, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch)
-    {
+    public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, FoxEntity fox, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
+        if (!((LambdaFoxEntity) fox).getFoxType().equals(this.type))
+            return;
         ItemStack stack = ((LambdaFoxEntity) fox).getFoxArmor();
 
         if (stack.getItem() instanceof FoxArmorItem) {

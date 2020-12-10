@@ -17,10 +17,14 @@
 
 package me.lambdaurora.lambdafoxes.client.mixin;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import me.lambdaurora.lambdafoxes.client.FoxModels;
 import me.lambdaurora.lambdafoxes.client.render.FoxArmorFeatureRenderer;
 import me.lambdaurora.lambdafoxes.client.render.LambdaFoxEntityModel;
 import me.lambdaurora.lambdafoxes.entity.LambdaFoxEntity;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import me.lambdaurora.lambdafoxes.registry.FoxType;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.FoxEntityRenderer;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.render.entity.model.FoxEntityModel;
@@ -33,49 +37,52 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Map;
+
 @Mixin(FoxEntityRenderer.class)
-public abstract class FoxEntityRendererMixin extends MobEntityRenderer<FoxEntity, FoxEntityModel<FoxEntity>>
-{
-    public FoxEntityRendererMixin(EntityRenderDispatcher entityRenderDispatcher, FoxEntityModel<FoxEntity> entityModel, float f)
-    {
-        super(entityRenderDispatcher, entityModel, f);
+public abstract class FoxEntityRendererMixin extends MobEntityRenderer<FoxEntity, FoxEntityModel<FoxEntity>> {
+    private final Map<FoxType, LambdaFoxEntityModel<FoxEntity>> lambdafoxes$models = new Object2ObjectOpenHashMap<>();
+
+    public FoxEntityRendererMixin(EntityRendererFactory.Context context, FoxEntityModel<FoxEntity> entityModel, float f) {
+        super(context, entityModel, f);
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(EntityRenderDispatcher dispatcher, CallbackInfo ci)
-    {
-        this.model = new LambdaFoxEntityModel<>(0.f);
-        this.addFeature(new FoxArmorFeatureRenderer(this));
+    private void onInit(EntityRendererFactory.Context context, CallbackInfo ci) {
+        this.model = new LambdaFoxEntityModel<>(context.getPart(FoxModels.FOX_MODEL_LAYER));
+        FoxType.stream().forEach(type -> {
+            this.lambdafoxes$models.put(type, new LambdaFoxEntityModel<>(context.getPart(type.getModel())));
+            this.features.add(new FoxArmorFeatureRenderer(this,
+                    type, new LambdaFoxEntityModel<>(context.getPart(type.getArmorModel()))));
+        });
     }
 
     @Override
-    public float getAnimationProgress(FoxEntity fox, float tickDelta)
-    {
+    public float getAnimationProgress(FoxEntity fox, float tickDelta) {
         return ((LambdaFoxEntity) fox).getTailAngle();
     }
 
     @Override
-    public void scale(FoxEntity fox, MatrixStack matrices, float tickDelta)
-    {
-        float scaleFactor = ((LambdaFoxEntity) fox).getFoxType().scaleFactor;
+    public void scale(FoxEntity fox, MatrixStack matrices, float tickDelta) {
+        float scaleFactor = ((LambdaFoxEntity) fox).getFoxType().getScaleFactor();
         matrices.scale(scaleFactor, scaleFactor, scaleFactor);
     }
 
-    /*@Override
+    @Override
     public void render(FoxEntity fox, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+        this.model = this.lambdafoxes$models.get(((LambdaFoxEntity) fox).getFoxType());
         super.render(fox, yaw, tickDelta, matrices, vertexConsumers, light);
-        long time = fox.getEntityWorld().getTime();
+        /*long time = fox.getEntityWorld().getTime();
         BeaconBlockEntityRenderer.renderLightBeam(matrices, vertexConsumers, BeaconBlockEntityRenderer.BEAM_TEXTURE, tickDelta, 1.0f, time, 0, 256, DyeColor.ORANGE.getColorComponents(), 0.25f, 0.35f);
-        BeaconBlockEntityRenderer.renderLightBeam(matrices, vertexConsumers, BeaconBlockEntityRenderer.BEAM_TEXTURE, tickDelta, 1.0f, time, 0, -256, DyeColor.ORANGE.getColorComponents(), 0.25f, 0.35f);
-    }*/
+        BeaconBlockEntityRenderer.renderLightBeam(matrices, vertexConsumers, BeaconBlockEntityRenderer.BEAM_TEXTURE, tickDelta, 1.0f, time, 0, -256, DyeColor.ORANGE.getColorComponents(), 0.25f, 0.35f);*/
+    }
 
     /**
      * @author LambdAurora
      * @reason Replace the get texture with one which allows custom fox types.
      */
     @Overwrite
-    public Identifier getTexture(FoxEntity fox)
-    {
+    public Identifier getTexture(FoxEntity fox) {
         return ((LambdaFoxEntity) fox).getFoxType().getTextureId(fox);
     }
 }

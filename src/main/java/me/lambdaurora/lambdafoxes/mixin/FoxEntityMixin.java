@@ -68,8 +68,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 @Mixin(FoxEntity.class)
-public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEntity
-{
+public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEntity {
     @Shadow
     @Final
     private static TrackedData<Integer> TYPE;
@@ -108,34 +107,29 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     private boolean waiting;
     private float appreciation;
 
-    protected FoxEntityMixin(EntityType<? extends AnimalEntity> entityType, World world)
-    {
+    protected FoxEntityMixin(EntityType<? extends AnimalEntity> entityType, World world) {
         super(entityType, world);
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void onInit(EntityType<? extends FoxEntity> entityType, World world, CallbackInfo ci)
-    {
+    private void onInit(EntityType<? extends FoxEntity> entityType, World world, CallbackInfo ci) {
         this.appreciation = 0.f;
     }
 
     @Inject(method = "initDataTracker", at = @At("TAIL"))
-    private void onInitDataTracker(CallbackInfo ci)
-    {
+    private void onInitDataTracker(CallbackInfo ci) {
         this.dataTracker.startTracking(LambdaFoxesRegistry.FOX_TRUST_LEVEL, this.random.nextInt(2));
         this.dataTracker.startTracking(LambdaFoxesRegistry.FOX_PET_STATUS, false);
         this.dataTracker.startTracking(LambdaFoxesRegistry.FOX_PET_COOLDOWN, 0);
     }
 
     @ModifyArg(method = "initGoals", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/goal/FleeEntityGoal;<init>(Lnet/minecraft/entity/mob/PathAwareEntity;Ljava/lang/Class;FDDLjava/util/function/Predicate;)V", ordinal = 0), index = 5)
-    private Predicate<LivingEntity> onInitPlayerFeelGoal(Predicate<LivingEntity> predicate)
-    {
+    private Predicate<LivingEntity> onInitPlayerFeelGoal(Predicate<LivingEntity> predicate) {
         return Predicates.and(predicate, livingEntity -> this.isWild());
     }
 
     @Inject(method = "initGoals", at = @At("TAIL"))
-    private void onInitGoals(CallbackInfo ci)
-    {
+    private void onInitGoals(CallbackInfo ci) {
         this.goalSelector.add(1, new FoxSitGoal((FoxEntity) (Object) this));
         this.goalSelector.add(5, new FollowTrustedOwnerGoal((FoxEntity) (Object) this, 1.0D, 10.0F, 2.0F, false));
         this.targetSelector.add(4, new FoxAttackWithOwnerGoal(this));
@@ -150,8 +144,7 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
             )
     )
     private void onInitialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason,
-                              @Nullable EntityData entityData, @Nullable CompoundTag entityTag, CallbackInfoReturnable<EntityData> cir)
-    {
+                              @Nullable EntityData entityData, @Nullable CompoundTag entityTag, CallbackInfoReturnable<EntityData> cir) {
         // Me: Can I have registry?
         // Mojang: no, we already have that at home
         // Registry at home: *is enums*
@@ -159,8 +152,7 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Inject(method = "createChild", at = @At("TAIL"), cancellable = true)
-    private void onCreateChild(ServerWorld world, @NotNull PassiveEntity mate, CallbackInfoReturnable<FoxEntity> cir)
-    {
+    private void onCreateChild(ServerWorld world, @NotNull PassiveEntity mate, CallbackInfoReturnable<FoxEntity> cir) {
         FoxEntity child = cir.getReturnValue();
 
         List<FoxType> roll = new ArrayList<>();
@@ -191,8 +183,7 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Inject(method = "addTypeSpecificGoals", at = @At("HEAD"), cancellable = true)
-    private void onAddTypeSpecificGoals(CallbackInfo ci)
-    {
+    private void onAddTypeSpecificGoals(CallbackInfo ci) {
         if (this.world.isClient()) {
             ci.cancel(); // Why this isn't done already?
             return;
@@ -200,8 +191,7 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Inject(method = "writeCustomDataToTag", at = @At("TAIL"))
-    private void onWriteCustomDataToTag(CompoundTag tag, CallbackInfo ci)
-    {
+    private void onWriteCustomDataToTag(CompoundTag tag, CallbackInfo ci) {
         tag.putString("Type", this.getFoxType().getKey());
         tag.putInt("TrustLevel", this.getTrustLevel());
         tag.putBoolean("Waiting", this.isWaiting());
@@ -209,8 +199,7 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Inject(method = "readCustomDataFromTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/FoxEntity;setCrouching(Z)V", shift = At.Shift.AFTER))
-    private void onReadCustomDataTag(CompoundTag tag, CallbackInfo ci)
-    {
+    private void onReadCustomDataTag(CompoundTag tag, CallbackInfo ci) {
         this.setFoxType(FoxType.fromId(tag.getString("Type")));
         this.setTrustLevel(tag.getInt("TrustLevel"));
         this.setWaiting(tag.getBoolean("Waiting"));
@@ -218,8 +207,7 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
-    private void onTick(CallbackInfo ci)
-    {
+    private void onTick(CallbackInfo ci) {
         int petCooldown = this.dataTracker.get(LambdaFoxesRegistry.FOX_PET_COOLDOWN);
         if (!this.getEntityWorld().isClient()) {
             if (petCooldown > 0) {
@@ -232,8 +220,7 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Override
-    public int getArmor()
-    {
+    public int getArmor() {
         int bonus = super.getArmor();
 
         ItemStack armor = this.getFoxArmor();
@@ -246,23 +233,20 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
 
 
     @Override
-    public void setOnFireFor(int seconds)
-    {
-        if (this.getFoxType().fireImmune)
+    public void setOnFireFor(int seconds) {
+        if (this.getFoxType().isFireImmune())
             return;
 
         super.setOnFireFor(seconds);
     }
 
     @Override
-    public boolean isFireImmune()
-    {
-        return this.getFoxType().fireImmune || super.isFireImmune();
+    public boolean isFireImmune() {
+        return this.getFoxType().isFireImmune() || super.isFireImmune();
     }
 
     @Override
-    public @NotNull ActionResult interactMob(@NotNull PlayerEntity player, Hand hand)
-    {
+    public @NotNull ActionResult interactMob(@NotNull PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
         Item item = stack.getItem();
 
@@ -356,8 +340,7 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Override
-    public AbstractTeam getScoreboardTeam()
-    {
+    public AbstractTeam getScoreboardTeam() {
         if (this.isTamed()) {
             Optional<LivingEntity> livingEntity = this.getOwner();
             if (livingEntity.isPresent()) {
@@ -369,8 +352,7 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Override
-    public boolean isTeammate(Entity other)
-    {
+    public boolean isTeammate(Entity other) {
         if (this.isTamed()) {
             Optional<LivingEntity> livingEntity = this.getOwner();
 
@@ -383,8 +365,7 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Override
-    public void onDeath(DamageSource source)
-    {
+    public void onDeath(DamageSource source) {
         if (!this.world.isClient && this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES) && this.getTrustLevel() >= this.getMaxTrustLevel() - 1) {
             this.getOwner().filter(owner -> owner instanceof ServerPlayerEntity).ifPresent(owner -> owner.sendSystemMessage(this.getDamageTracker().getDeathMessage(), Util.NIL_UUID));
         }
@@ -393,38 +374,32 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Override
-    public FoxType getFoxType()
-    {
+    public FoxType getFoxType() {
         return FoxType.fromNumericId(this.dataTracker.get(TYPE));
     }
 
     @Override
-    public void setFoxType(@NotNull FoxType type)
-    {
+    public void setFoxType(@NotNull FoxType type) {
         this.dataTracker.set(TYPE, type.getNumericId());
     }
 
     @Override
-    public void setFoxSleeping(boolean sleeping)
-    {
+    public void setFoxSleeping(boolean sleeping) {
         this.setSleeping(sleeping);
     }
 
     @Override
-    public void setFoxAggressive(boolean aggressive)
-    {
+    public void setFoxAggressive(boolean aggressive) {
         this.setAggressive(aggressive);
     }
 
     @Override
-    public @NotNull ItemStack getFoxArmor()
-    {
+    public @NotNull ItemStack getFoxArmor() {
         return this.getEquippedStack(EquipmentSlot.CHEST);
     }
 
     @Override
-    public void setFoxArmor(@NotNull ItemStack stack)
-    {
+    public void setFoxArmor(@NotNull ItemStack stack) {
         ItemStack oldArmor = this.getFoxArmor();
         if (!oldArmor.isEmpty()) {
             ItemEntity itemEntity = this.dropStack(oldArmor);
@@ -437,14 +412,12 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Override
-    public void stopFoxActions()
-    {
+    public void stopFoxActions() {
         this.stopActions();
     }
 
     @Override
-    public float getTailAngle()
-    {
+    public float getTailAngle() {
         if (this.isSleeping())
             return this.isBaby() ? -2.1816616F : -2.6179938F;
         if (this.isSitting())
@@ -453,26 +426,22 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Override
-    public float getAppreciation()
-    {
+    public float getAppreciation() {
         return this.appreciation;
     }
 
     @Override
-    public void setAppreciation(float appreciation)
-    {
+    public void setAppreciation(float appreciation) {
         this.appreciation = appreciation;
     }
 
     @Override
-    public int getTrustLevel()
-    {
+    public int getTrustLevel() {
         return this.dataTracker.get(LambdaFoxesRegistry.FOX_TRUST_LEVEL);
     }
 
     @Override
-    public void setTrustLevel(int trustLevel)
-    {
+    public void setTrustLevel(int trustLevel) {
         trustLevel = MathHelper.clamp(trustLevel, 0, this.getMaxTrustLevel());
         this.dataTracker.set(LambdaFoxesRegistry.FOX_TRUST_LEVEL, trustLevel);
 
@@ -487,32 +456,27 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Override
-    public int getMaxTrustLevel()
-    {
+    public int getMaxTrustLevel() {
         return 3;
     }
 
     @Inject(method = "canTrust", at = @At("RETURN"), cancellable = true)
-    private void onCanTrust(UUID uuid, CallbackInfoReturnable<Boolean> cir)
-    {
+    private void onCanTrust(UUID uuid, CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(cir.getReturnValueZ() && this.getTrustLevel() > this.getMaxTrustLevel() - 2);
     }
 
     @Override
-    public void setWaiting(boolean waiting)
-    {
+    public void setWaiting(boolean waiting) {
         this.waiting = waiting;
     }
 
     @Override
-    public boolean isWaiting()
-    {
+    public boolean isWaiting() {
         return this.waiting;
     }
 
     @Override
-    public boolean canAttackWithOwner(@NotNull LivingEntity target, @NotNull LivingEntity owner)
-    {
+    public boolean canAttackWithOwner(@NotNull LivingEntity target, @NotNull LivingEntity owner) {
         if (!(target instanceof CreeperEntity) && !(target instanceof GhastEntity)) {
             if (target instanceof FoxEntity) {
                 return false; // Foxes don't attack foxes.
@@ -531,26 +495,22 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     }
 
     @Override
-    public @NotNull Optional<UUID> getOwnerUuid()
-    {
+    public @NotNull Optional<UUID> getOwnerUuid() {
         return this.dataTracker.get(OWNER);
     }
 
     @Override
-    public @NotNull Optional<LivingEntity> getOwner()
-    {
+    public @NotNull Optional<LivingEntity> getOwner() {
         return this.getOwnerUuid().map(uuid -> this.world.getPlayerByUuid(uuid));
     }
 
     @Override
-    public boolean canAnimatePet()
-    {
+    public boolean canAnimatePet() {
         return this.isBeingPet() && !(this.isSleeping() || this.isChasing());
     }
 
     @Override
-    public boolean isBeingPet()
-    {
+    public boolean isBeingPet() {
         return this.dataTracker.get(LambdaFoxesRegistry.FOX_PET_STATUS);
     }
 }

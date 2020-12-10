@@ -18,6 +18,8 @@
 package me.lambdaurora.lambdafoxes.client.render;
 
 import me.lambdaurora.lambdafoxes.entity.PettableEntity;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +31,8 @@ import org.jetbrains.annotations.NotNull;
  * @version 1.0.0
  * @since 1.0.0
  */
-public interface PettableEntityModel
-{
+@Environment(EnvType.CLIENT)
+public interface PettableEntityModel {
     /**
      * Returns the tail model part.
      *
@@ -39,22 +41,15 @@ public interface PettableEntityModel
     @NotNull ModelPart getTail();
 
     /**
-     * Resets the tail pivot.
-     */
-    void resetTailPivot();
-
-    /**
      * Animates the tail of the entity while being pet.
      *
      * @param entity the entity
      * @param tickDelta the tick delta
      */
-    default void animateTailWhilePet(PettableEntity entity, float tickDelta)
-    {
+    default void animateTailWhilePet(PettableEntity entity, float tickDelta) {
         if (entity.canAnimatePet()) {
             final double tailAnimation = Math.sin((((Entity) entity).getEntityId() + ((Entity) entity).age + tickDelta) * 0.5) * 10.0;
             this.getTail().roll = (float) Math.toRadians(tailAnimation);
-            this.resetTailPivot();
         } else {
             this.getTail().roll = 0;
         }
