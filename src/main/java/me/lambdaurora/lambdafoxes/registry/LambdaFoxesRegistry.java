@@ -20,11 +20,14 @@ package me.lambdaurora.lambdafoxes.registry;
 import me.lambdaurora.lambdafoxes.LambdaFoxes;
 import me.lambdaurora.lambdafoxes.item.DyeableFoxArmorItem;
 import me.lambdaurora.lambdafoxes.item.FoxArmorItem;
+import me.lambdaurora.lambdafoxes.item.FoxsicleItem;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.FoxEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,6 +49,9 @@ public class LambdaFoxesRegistry
     public static final FoxArmorItem GOLDEN_FOX_ARMOR = register("golden_fox_armor", new FoxArmorItem("golden", 7, false));
     public static final FoxArmorItem DIAMOND_FOX_ARMOR = register("diamond_fox_armor", new FoxArmorItem("diamond", 11, false));
     public static final FoxArmorItem NETHERITE_FOX_ARMOR = register("netherite_fox_armor", new FoxArmorItem("netherite", 15, true));
+
+    public static final FoxsicleItem CATSICLE_ITEM = register("catsicle", new FoxsicleItem(new FabricItemSettings().group(ItemGroup.FOOD)));
+    public static final FoxsicleItem FOXSICLE_ITEM = register("foxsicle", new FoxsicleItem(new FabricItemSettings().group(ItemGroup.FOOD)));
 
     public static void init()
     {

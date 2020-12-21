@@ -18,7 +18,7 @@
 package me.lambdaurora.lambdafoxes;
 
 import me.lambdaurora.lambdafoxes.registry.LambdaFoxesRegistry;
-import me.lambdaurora.lambdafoxes.tag.BiomeTagReloadListener;
+import me.lambdaurora.lambdafoxes.tag.UhOhRequiredTagListRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
@@ -28,7 +28,10 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.tag.RequiredTagList;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.SpawnSettings.SpawnEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 public class LambdaFoxes implements ModInitializer
 {
     public static final String MODID = "lambdafoxes";
+    public static final RequiredTagList<Biome> REQUIRED_TAGS = UhOhRequiredTagListRegistry.register(Registry.BIOME_KEY, "tags/biomes");
     private static LambdaFoxes INSTANCE;
     public final Logger logger = LogManager.getLogger("lambdafoxes");
 
@@ -52,10 +56,6 @@ public class LambdaFoxes implements ModInitializer
     {
         INSTANCE = this;
         this.log("Initializing LambdaFoxes...");
-
-        BiomeTagReloadListener listener = new BiomeTagReloadListener();
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(listener);
-        ServerLifecycleEvents.SERVER_STARTING.register(listener::onServerStarting);
 
         LambdaFoxesRegistry.init();
 

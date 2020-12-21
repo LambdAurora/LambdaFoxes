@@ -105,11 +105,11 @@ public class LambdaFoxEntityModel<T extends FoxEntity> extends FoxEntityModel<T>
                         .cuboid(-3.f, -2.f, -5.f, 8.f, 6.f, 6.f, extra),
                 ModelTransform.pivot(-1.f, 16.5f, -3.f));
         head.addChild("right_ear", ModelPartBuilder.create()
-                        .uv(8, 1)
+                        .uv(7, 0)
                         .cuboid(-4.f, -5.f, -4.f, 3.f, 4.f, 1.f, extra),
                 ModelTransform.of(-.9f, 0, .5f, 0, -.25f, 0));
         head.addChild("left_ear", ModelPartBuilder.create()
-                        .uv(15, 1)
+                        .uv(15, 0)
                         .cuboid(3.f, -5.f, -4.f, 3.f, 4.f, 1.f, extra),
                 ModelTransform.of(1.f, 0, 1.f, 0, .25f, 0));
         head.addChild("nose", ModelPartBuilder.create()

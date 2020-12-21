@@ -17,6 +17,12 @@
 
 package me.lambdaurora.lambdafoxes.item;
 
-public class FoxsicleItem
+import net.minecraft.item.FoodComponent;
+import net.minecraft.item.Item;
+
+public class FoxsicleItem extends Item
 {
+    public FoxsicleItem(Settings settings) {
+        super(settings.food(new FoodComponent.Builder().hunger(2).saturationModifier(.1f).build()));
+    }
 }

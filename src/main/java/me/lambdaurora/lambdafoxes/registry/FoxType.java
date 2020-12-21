@@ -18,7 +18,6 @@
 package me.lambdaurora.lambdafoxes.registry;
 
 import me.lambdaurora.lambdafoxes.LambdaFoxes;
-import me.lambdaurora.lambdafoxes.tag.BiomeTags;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
@@ -118,7 +117,7 @@ public class FoxType implements Nameable {
             String biomeNamespace = id.getNamespace();
             if (biomeNamespace.equalsIgnoreCase("minecraft"))
                 biomeNamespace = LambdaFoxes.MODID;
-            this.biomes = BiomeTags.register(new Identifier(biomeNamespace, "fox_spawn/" + id.getPath()));
+            this.biomes = LambdaFoxes.REQUIRED_TAGS.add(biomeNamespace + ":fox_spawn/" + id.getPath());
             this.modelId = modelId;
         }
 

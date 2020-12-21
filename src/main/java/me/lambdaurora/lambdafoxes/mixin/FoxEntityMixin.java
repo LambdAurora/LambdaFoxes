@@ -274,7 +274,7 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
         if (!this.isWild()) {
             if (!(item instanceof DyeItem)) {
                 if (item.isFood() && this.getHealth() < this.getMaxHealth()) {
-                    this.eat(player, stack);
+                    this.eat(player, hand, stack);
                     this.heal((float) item.getFoodComponent().getHunger());
                     return ActionResult.CONSUME;
                 }
