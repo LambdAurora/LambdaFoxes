@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.lambdaurora.lambdafoxes.client.mixin;
+package me.lambdaurora.lambdafoxes.mixin.client;
 
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.entity.model.EntityModelLayers;

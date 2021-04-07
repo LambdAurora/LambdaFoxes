@@ -37,8 +37,7 @@ import java.util.Optional;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class FollowTrustedOwnerGoal extends Goal
-{
+public class FollowTrustedOwnerGoal extends Goal {
     private final FoxEntity entity;
     private LivingEntity owner;
     private final WorldView world;
@@ -50,8 +49,7 @@ public class FollowTrustedOwnerGoal extends Goal
     private float oldWaterPathfindingPenalty;
     private final boolean leavesAllowed;
 
-    public FollowTrustedOwnerGoal(FoxEntity entity, double speed, float minDistance, float maxDistance, boolean leavesAllowed)
-    {
+    public FollowTrustedOwnerGoal(FoxEntity entity, double speed, float minDistance, float maxDistance, boolean leavesAllowed) {
         this.entity = entity;
         this.world = entity.world;
         this.speed = speed;
@@ -66,8 +64,7 @@ public class FollowTrustedOwnerGoal extends Goal
     }
 
     @Override
-    public boolean canStart()
-    {
+    public boolean canStart() {
         Optional<LivingEntity> owner = ((TrustEntity) this.entity).getOwner();
         if (!owner.isPresent())
             return false;
@@ -88,8 +85,7 @@ public class FollowTrustedOwnerGoal extends Goal
     }
 
     @Override
-    public boolean shouldContinue()
-    {
+    public boolean shouldContinue() {
         if (this.navigation.isIdle()) {
             return false;
         } else if (this.entity.isSitting()) {
@@ -100,24 +96,21 @@ public class FollowTrustedOwnerGoal extends Goal
     }
 
     @Override
-    public void start()
-    {
+    public void start() {
         this.updateCountdownTicks = 0;
         this.oldWaterPathfindingPenalty = this.entity.getPathfindingPenalty(PathNodeType.WATER);
         this.entity.setPathfindingPenalty(PathNodeType.WATER, 0.0F);
     }
 
     @Override
-    public void stop()
-    {
+    public void stop() {
         this.owner = null;
         this.navigation.stop();
         this.entity.setPathfindingPenalty(PathNodeType.WATER, this.oldWaterPathfindingPenalty);
     }
 
     @Override
-    public void tick()
-    {
+    public void tick() {
         this.entity.getLookControl().lookAt(this.owner, 10.0F, (float) this.entity.getLookPitchSpeed());
         if (--this.updateCountdownTicks <= 0) {
             this.updateCountdownTicks = 10;
@@ -130,22 +123,21 @@ public class FollowTrustedOwnerGoal extends Goal
         }
     }
 
-    private void tryTeleport()
-    {
+    private void tryTeleport() {
         BlockPos blockPos = this.owner.getBlockPos();
 
         for (int i = 0; i < 10; ++i) {
             int offsetX = this.getRandomInt(-3, 3);
             int offsetY = this.getRandomInt(-1, 1);
             int offsetZ = this.getRandomInt(-3, 3);
-            boolean teleported = this.tryTeleportTo(blockPos.getX() + offsetX, blockPos.getY() + offsetY, blockPos.getZ() + offsetZ);
+            boolean teleported =
+                    this.tryTeleportTo(blockPos.getX() + offsetX, blockPos.getY() + offsetY, blockPos.getZ() + offsetZ);
             if (teleported)
                 return;
         }
     }
 
-    private boolean tryTeleportTo(int x, int y, int z)
-    {
+    private boolean tryTeleportTo(int x, int y, int z) {
         if (Math.abs((double) x - this.owner.getX()) < 2.0D && Math.abs((double) z - this.owner.getZ()) < 2.0D)
             return false;
         else if (!this.canTeleportTo(new BlockPos(x, y, z)))
@@ -156,8 +148,7 @@ public class FollowTrustedOwnerGoal extends Goal
         return true;
     }
 
-    private boolean canTeleportTo(BlockPos pos)
-    {
+    private boolean canTeleportTo(BlockPos pos) {
         PathNodeType pathNodeType = LandPathNodeMaker.getLandNodeType(this.world, pos.mutableCopy());
         if (pathNodeType != PathNodeType.WALKABLE)
             return false;
@@ -172,8 +163,7 @@ public class FollowTrustedOwnerGoal extends Goal
         }
     }
 
-    private int getRandomInt(int min, int max)
-    {
+    private int getRandomInt(int min, int max) {
         return this.entity.getRandom().nextInt(max - min + 1) + min;
     }
 }

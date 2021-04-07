@@ -24,13 +24,12 @@
     ]
   },
   "mixins": [
-    "lambdafoxes.mixins.json",
-    "lambdafoxes.client.mixins.json"
+    "lambdafoxes.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.8.0",
-    "fabric": "*",
-    "minecraft": ">=1.16"
+    "minecraft": ">=1.17-alpha.21.14.a",
+    "fabricloader": ">=0.11.1",
+    "fabric": ">=0.32.6+1.17"
   },
   "recommends": {
     "modmenu": ">=1.12.2"

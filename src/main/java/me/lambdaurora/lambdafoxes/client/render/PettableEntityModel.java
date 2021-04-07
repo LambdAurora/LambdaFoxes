@@ -48,7 +48,7 @@ public interface PettableEntityModel {
      */
     default void animateTailWhilePet(PettableEntity entity, float tickDelta) {
         if (entity.canAnimatePet()) {
-            final double tailAnimation = Math.sin((((Entity) entity).getEntityId() + ((Entity) entity).age + tickDelta) * 0.5) * 10.0;
+            final double tailAnimation = Math.sin((((Entity) entity).getId() + ((Entity) entity).age + tickDelta) * 0.5) * 10.0;
             this.getTail().roll = (float) Math.toRadians(tailAnimation);
         } else {
             this.getTail().roll = 0;

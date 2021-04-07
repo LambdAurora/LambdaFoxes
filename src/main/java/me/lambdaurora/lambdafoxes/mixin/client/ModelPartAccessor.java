@@ -15,9 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.lambdaurora.lambdafoxes.client.mixin;
+package me.lambdaurora.lambdafoxes.mixin.client;
 
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.client.model.ModelPart;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -26,8 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mixin(ModelPart.class)
-public interface ModelPartAccessor
-{
+public interface ModelPartAccessor {
     @Accessor("cuboids")
     List<ModelPart.Cuboid> lambdafoxes_getCuboids();
 

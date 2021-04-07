@@ -39,8 +39,7 @@ import java.util.Random;
  * @version 1.0.0
  * @since 1.0.0
  */
-public interface LambdaFoxEntity extends TrustEntity, PettableEntity
-{
+public interface LambdaFoxEntity extends TrustEntity, PettableEntity {
     /**
      * Returns the type of this fox.
      *
@@ -105,9 +104,9 @@ public interface LambdaFoxEntity extends TrustEntity, PettableEntity
      */
     void setAppreciation(float appreciation);
 
-    static boolean canSpawn(EntityType<FoxEntity> fox, WorldAccess world, SpawnReason reason, BlockPos pos, Random random)
-    {
+    static boolean canSpawn(EntityType<FoxEntity> fox, WorldAccess world, SpawnReason reason, BlockPos pos, Random random) {
         BlockState state = world.getBlockState(pos.down());
-        return (state.isOf(Blocks.GRASS_BLOCK) || state.isOf(Blocks.SNOW) || state.isOf(Blocks.SAND)) && world.getBaseLightLevel(pos, 0) > 8;
+        return (state.isOf(Blocks.GRASS_BLOCK) || state.isOf(Blocks.SNOW) || state.isOf(Blocks.SAND))
+                && world.getBaseLightLevel(pos, 0) > 8;
     }
 }

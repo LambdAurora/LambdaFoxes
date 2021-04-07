@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.lambdaurora.lambdafoxes.client.mixin;
+package me.lambdaurora.lambdafoxes.mixin.client;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FoxHeldItemFeatureRenderer;
@@ -30,7 +30,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FoxHeldItemFeatureRenderer.class)
 public class FoxHeldItemFeatureRendererMixin {
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/FoxEntity;getEquippedStack(Lnet/minecraft/entity/EquipmentSlot;)Lnet/minecraft/item/ItemStack;"))
-    private void onRender(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, FoxEntity fox, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch, CallbackInfo ci) {
+    private void onRender(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, FoxEntity fox,
+                          float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch,
+                          CallbackInfo ci) {
         matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0f));
         matrices.translate(0, -0.2, 0);
     }

@@ -38,8 +38,7 @@ import org.jetbrains.annotations.NotNull;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class LambdaFoxesRegistry
-{
+public class LambdaFoxesRegistry {
     public static final TrackedData<Integer> FOX_TRUST_LEVEL = DataTracker.registerData(FoxEntity.class, TrackedDataHandlerRegistry.INTEGER);
     public static final TrackedData<Boolean> FOX_PET_STATUS = DataTracker.registerData(FoxEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Integer> FOX_PET_COOLDOWN = DataTracker.registerData(FoxEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -53,13 +52,11 @@ public class LambdaFoxesRegistry
     public static final FoxsicleItem CATSICLE_ITEM = register("catsicle", new FoxsicleItem(new FabricItemSettings().group(ItemGroup.FOOD)));
     public static final FoxsicleItem FOXSICLE_ITEM = register("foxsicle", new FoxsicleItem(new FabricItemSettings().group(ItemGroup.FOOD)));
 
-    public static void init()
-    {
+    public static void init() {
         FoxType.fromNumericId(0); // Triggers initialization.
     }
 
-    private static <T extends Item> T register(@NotNull String name, @NotNull T item)
-    {
+    private static <T extends Item> T register(@NotNull String name, @NotNull T item) {
         return Registry.register(Registry.ITEM, LambdaFoxes.id(name), item);
     }
 }

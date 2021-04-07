@@ -29,11 +29,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = {Enchantment.class})
-public class EnchantmentMixin
-{
-    @Inject(method = "isAcceptableItem", at = @At(value = "RETURN", shift = At.Shift.AFTER))
-    private void onIsAcceptableItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir)
-    {
+public class EnchantmentMixin {
+    @Inject(method = "isAcceptableItem", at = @At(value = "RETURN", shift = At.Shift.AFTER), cancellable = true)
+    private void onIsAcceptableItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (stack.getItem() instanceof FoxArmorItem) {
             if (((Object) this) instanceof ProtectionEnchantment || ((Object) this) instanceof BindingCurseEnchantment || ((Object) this) instanceof ThornsEnchantment) {
                 cir.setReturnValue(true);

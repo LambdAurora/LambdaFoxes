@@ -35,22 +35,19 @@ import java.util.Optional;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class FoxAttackWithOwnerGoal extends TrackTargetGoal
-{
+public class FoxAttackWithOwnerGoal extends TrackTargetGoal {
     private final LambdaFoxEntity fox;
     private LivingEntity attacking;
     private int lastAttackTime;
 
-    public FoxAttackWithOwnerGoal(LambdaFoxEntity fox)
-    {
+    public FoxAttackWithOwnerGoal(LambdaFoxEntity fox) {
         super((MobEntity) fox, false);
         this.fox = fox;
         this.setControls(EnumSet.of(Control.TARGET));
     }
 
     @Override
-    public boolean canStart()
-    {
+    public boolean canStart() {
         if (this.fox.getTrustLevel() >= this.fox.getMaxTrustLevel() - 1 && !this.fox.isWaiting()) {
             Optional<LivingEntity> owner = this.fox.getOwner();
             if (owner.isPresent()) {
@@ -65,8 +62,7 @@ public class FoxAttackWithOwnerGoal extends TrackTargetGoal
     }
 
     @Override
-    public void start()
-    {
+    public void start() {
         ((FoxEntity) this.fox).setTarget(this.attacking);
         this.fox.getOwner().ifPresent(livingEntity -> this.lastAttackTime = livingEntity.getLastAttackTime());
 

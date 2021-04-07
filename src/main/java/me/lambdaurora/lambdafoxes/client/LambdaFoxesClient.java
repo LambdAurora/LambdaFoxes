@@ -24,7 +24,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.minecraft.client.util.math.Dilation;
 import net.minecraft.item.DyeableItem;
 
 /**
@@ -38,7 +37,8 @@ import net.minecraft.item.DyeableItem;
 public class LambdaFoxesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex > 0 ? -1 : ((DyeableItem) stack.getItem()).getColor(stack), LambdaFoxesRegistry.LEATHER_FOX_ARMOR);
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex > 0 ? -1
+                : ((DyeableItem) stack.getItem()).getColor(stack), LambdaFoxesRegistry.LEATHER_FOX_ARMOR);
         FoxModels.register();
         FoxModels.registerModel(FoxType.RED, LambdaFoxEntityModel::getFoxModelData);
         FoxModels.registerModel(FoxType.FENNEC, LambdaFoxEntityModel::getFennecModelData);

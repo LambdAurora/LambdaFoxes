@@ -36,7 +36,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -123,7 +123,14 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
         this.dataTracker.startTracking(LambdaFoxesRegistry.FOX_PET_COOLDOWN, 0);
     }
 
-    @ModifyArg(method = "initGoals", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/goal/FleeEntityGoal;<init>(Lnet/minecraft/entity/mob/PathAwareEntity;Ljava/lang/Class;FDDLjava/util/function/Predicate;)V", ordinal = 0), index = 5)
+    @ModifyArg(
+            method = "initGoals",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/ai/goal/FleeEntityGoal;<init>(Lnet/minecraft/entity/mob/PathAwareEntity;Ljava/lang/Class;FDDLjava/util/function/Predicate;)V",
+                    ordinal = 0),
+            index = 5
+    )
     private Predicate<LivingEntity> onInitPlayerFeelGoal(Predicate<LivingEntity> predicate) {
         return Predicates.and(predicate, livingEntity -> this.isWild());
     }
@@ -131,7 +138,8 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
     @Inject(method = "initGoals", at = @At("TAIL"))
     private void onInitGoals(CallbackInfo ci) {
         this.goalSelector.add(1, new FoxSitGoal((FoxEntity) (Object) this));
-        this.goalSelector.add(5, new FollowTrustedOwnerGoal((FoxEntity) (Object) this, 1.0D, 10.0F, 2.0F, false));
+        this.goalSelector.add(5, new FollowTrustedOwnerGoal((FoxEntity) (Object) this, 1.0D,
+                10.0F, 2.0F, false));
         this.targetSelector.add(4, new FoxAttackWithOwnerGoal(this));
     }
 
@@ -144,7 +152,8 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
             )
     )
     private void onInitialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason,
-                              @Nullable EntityData entityData, @Nullable CompoundTag entityTag, CallbackInfoReturnable<EntityData> cir) {
+                              @Nullable EntityData entityData, @Nullable NbtCompound entityNbt,
+                              CallbackInfoReturnable<EntityData> cir) {
         // Me: Can I have registry?
         // Mojang: no, we already have that at home
         // Registry at home: *is enums*
@@ -190,20 +199,23 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
         }
     }
 
-    @Inject(method = "writeCustomDataToTag", at = @At("TAIL"))
-    private void onWriteCustomDataToTag(CompoundTag tag, CallbackInfo ci) {
-        tag.putString("Type", this.getFoxType().getKey());
-        tag.putInt("TrustLevel", this.getTrustLevel());
-        tag.putBoolean("Waiting", this.isWaiting());
-        tag.putFloat("Appreciation", this.appreciation);
+    @Inject(
+            method = "readCustomDataFromNbt",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/FoxEntity;setCrouching(Z)V", shift = At.Shift.AFTER)
+    )
+    private void onReadCustomDataTag(NbtCompound nbt, CallbackInfo ci) {
+        this.setFoxType(FoxType.fromId(nbt.getString("Type")));
+        this.setTrustLevel(nbt.getInt("TrustLevel"));
+        this.setWaiting(nbt.getBoolean("Waiting"));
+        this.appreciation = nbt.getFloat("Appreciation");
     }
 
-    @Inject(method = "readCustomDataFromTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/FoxEntity;setCrouching(Z)V", shift = At.Shift.AFTER))
-    private void onReadCustomDataTag(CompoundTag tag, CallbackInfo ci) {
-        this.setFoxType(FoxType.fromId(tag.getString("Type")));
-        this.setTrustLevel(tag.getInt("TrustLevel"));
-        this.setWaiting(tag.getBoolean("Waiting"));
-        this.appreciation = tag.getFloat("Appreciation");
+    @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
+    private void onWriteCustomDataToTag(NbtCompound nbt, CallbackInfo ci) {
+        nbt.putString("Type", this.getFoxType().getKey());
+        nbt.putInt("TrustLevel", this.getTrustLevel());
+        nbt.putBoolean("Waiting", this.isWaiting());
+        nbt.putFloat("Appreciation", this.appreciation);
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -267,7 +279,8 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
             } else if (item.isFood() && this.getHealth() < this.getMaxHealth()) {
                 return ActionResult.CONSUME;
             } else {
-                return !this.isBreedingItem(stack) || this.getHealth() >= this.getMaxHealth() && this.isTamed() ? ActionResult.PASS : ActionResult.SUCCESS;
+                return !this.isBreedingItem(stack) || this.getHealth() >= this.getMaxHealth() && this.isTamed()
+                        ? ActionResult.PASS : ActionResult.SUCCESS;
             }
         }
 
@@ -366,8 +379,10 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
 
     @Override
     public void onDeath(DamageSource source) {
-        if (!this.world.isClient && this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES) && this.getTrustLevel() >= this.getMaxTrustLevel() - 1) {
-            this.getOwner().filter(owner -> owner instanceof ServerPlayerEntity).ifPresent(owner -> owner.sendSystemMessage(this.getDamageTracker().getDeathMessage(), Util.NIL_UUID));
+        if (!this.world.isClient && this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES)
+                && this.getTrustLevel() >= this.getMaxTrustLevel() - 1) {
+            this.getOwner().filter(owner -> owner instanceof ServerPlayerEntity)
+                    .ifPresent(owner -> owner.sendSystemMessage(this.getDamageTracker().getDeathMessage(), Util.NIL_UUID));
         }
 
         super.onDeath(source);
@@ -483,7 +498,8 @@ public abstract class FoxEntityMixin extends AnimalEntity implements LambdaFoxEn
             } else if (target instanceof WolfEntity) {
                 WolfEntity wolf = (WolfEntity) target;
                 return !wolf.isTamed() || wolf.getOwner() != owner;
-            } else if (target instanceof PlayerEntity && owner instanceof PlayerEntity && !((PlayerEntity) owner).shouldDamagePlayer((PlayerEntity) target)) {
+            } else if (target instanceof PlayerEntity && owner instanceof PlayerEntity
+                    && !((PlayerEntity) owner).shouldDamagePlayer((PlayerEntity) target)) {
                 return false;
             } else if (target instanceof HorseBaseEntity && ((HorseBaseEntity) target).isTame()) {
                 return false;

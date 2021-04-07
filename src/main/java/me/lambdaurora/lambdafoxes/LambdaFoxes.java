@@ -23,11 +23,8 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.resource.ResourceType;
 import net.minecraft.tag.RequiredTagList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -44,16 +41,14 @@ import org.jetbrains.annotations.NotNull;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class LambdaFoxes implements ModInitializer
-{
-    public static final String MODID = "lambdafoxes";
+public class LambdaFoxes implements ModInitializer {
+    public static final String NAMESPACE = "lambdafoxes";
     public static final RequiredTagList<Biome> REQUIRED_TAGS = UhOhRequiredTagListRegistry.register(Registry.BIOME_KEY, "tags/biomes");
     private static LambdaFoxes INSTANCE;
     public final Logger logger = LogManager.getLogger("lambdafoxes");
 
     @Override
-    public void onInitialize()
-    {
+    public void onInitialize() {
         INSTANCE = this;
         this.log("Initializing LambdaFoxes...");
 
@@ -116,8 +111,7 @@ public class LambdaFoxes implements ModInitializer
      *
      * @param info the message to print
      */
-    public void log(String info)
-    {
+    public void log(String info) {
         this.logger.info("[LambdaFoxes] " + info);
     }
 
@@ -127,13 +121,11 @@ public class LambdaFoxes implements ModInitializer
      * @param path the path
      * @return the identifier
      */
-    public static Identifier id(@NotNull String path)
-    {
-        return new Identifier(MODID, path);
+    public static Identifier id(@NotNull String path) {
+        return new Identifier(NAMESPACE, path);
     }
 
-    public static LambdaFoxes get()
-    {
+    public static LambdaFoxes get() {
         return INSTANCE;
     }
 }

@@ -17,24 +17,21 @@
 
 package me.lambdaurora.lambdafoxes.client;
 
-import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.lambdaurora.lambdafoxes.LambdaFoxes;
-import me.lambdaurora.lambdafoxes.client.mixin.EntityModelLayersAccessor;
+import me.lambdaurora.lambdafoxes.mixin.client.EntityModelLayersAccessor;
 import me.lambdaurora.lambdafoxes.registry.FoxType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityModelLayerRegistry;
+import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.util.math.Dilation;
 
-import java.util.Map;
 import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
 public class FoxModels {
     public static final EntityModelLayer FOX_MODEL_LAYER = new EntityModelLayer(LambdaFoxes.id("fox"), "main");
-    private static final Map<EntityModelLayer, TexturedModelData> FOX_MODELS = new Object2ObjectOpenHashMap<>();
 
     static void register() {
         FoxType.stream().map(FoxType::getModel).distinct().forEach(EntityModelLayersAccessor.getLayers()::add);
@@ -42,11 +39,7 @@ public class FoxModels {
     }
 
     public static void registerModel(FoxType type, Function<Dilation, TexturedModelData> data) {
-        FOX_MODELS.put(type.getModel(), data.apply(Dilation.NONE));
-        FOX_MODELS.put(type.getArmorModel(), data.apply(new Dilation(.25f)));
-    }
-
-    public static void registerModels(ImmutableMap.Builder<EntityModelLayer, TexturedModelData> builder) {
-        FOX_MODELS.forEach(builder::put);
+        EntityModelLayerRegistry.registerModelLayer(type.getModel(), () -> data.apply(Dilation.NONE));
+        EntityModelLayerRegistry.registerModelLayer(type.getArmorModel(), () -> data.apply(new Dilation(.25f)));
     }
 }

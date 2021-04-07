@@ -22,7 +22,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.entity.model.FoxEntityModel;
-import net.minecraft.client.util.math.Dilation;
 import net.minecraft.entity.passive.FoxEntity;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;

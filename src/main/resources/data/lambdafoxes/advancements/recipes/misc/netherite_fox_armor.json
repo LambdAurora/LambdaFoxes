@@ -6,12 +6,32 @@
     ]
   },
   "criteria": {
-    "has_sweet_berries": {
+    "has_ingot": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "minecraft:sweet_berries"
+            "item": "minecraft:netherite_ingot"
+          }
+        ]
+      }
+    },
+    "has_fox_armor": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "lambdafoxes:diamond_fox_armor"
+          }
+        ]
+      }
+    },
+    "has_self": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "lambdafoxes:netherite_fox_armor"
           }
         ]
       }
@@ -25,7 +45,11 @@
   },
   "requirements": [
     [
-      "has_sweet_berries",
+      "has_berries",
+      "has_ingot",
+      "has_string",
+      "has_wool",
+      "has_self",
       "has_the_recipe"
     ]
   ]

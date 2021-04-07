@@ -6,7 +6,17 @@
     ]
   },
   "criteria": {
-    "has_leather": {
+    "has_berries": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "minecraft:fox_food"
+          }
+        ]
+      }
+    },
+    "has_ingot": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
@@ -16,12 +26,32 @@
         ]
       }
     },
-    "has_sweet_berries": {
+    "has_string": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "minecraft:sweet_berries"
+            "item": "minecraft:string"
+          }
+        ]
+      }
+    },
+    "has_wool": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "minecraft:wool"
+          }
+        ]
+      }
+    },
+    "has_self": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "lambdafoxes:leather_fox_armor"
           }
         ]
       }
@@ -35,8 +65,11 @@
   },
   "requirements": [
     [
-      "has_leather",
-      "has_sweet_berries",
+      "has_berries",
+      "has_ingot",
+      "has_string",
+      "has_wool",
+      "has_self",
       "has_the_recipe"
     ]
   ]

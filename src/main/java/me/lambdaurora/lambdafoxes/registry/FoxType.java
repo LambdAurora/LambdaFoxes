@@ -59,7 +59,8 @@ public class FoxType implements Nameable {
 
         @Override
         public net.minecraft.util.Identifier getTextureId(@NotNull FoxEntity entity) {
-            return entity.isSleeping() ? new net.minecraft.util.Identifier("textures/entity/fox/fox_sleep.png") : new net.minecraft.util.Identifier("textures/entity/fox/fox.png");
+            return entity.isSleeping() ? new net.minecraft.util.Identifier("textures/entity/fox/fox_sleep.png")
+                    : new net.minecraft.util.Identifier("textures/entity/fox/fox.png");
         }
     };
     public static final FoxType SNOW = new FoxType(new Identifier("minecraft", "snow"), 1,
@@ -116,7 +117,7 @@ public class FoxType implements Nameable {
         } else {
             String biomeNamespace = id.getNamespace();
             if (biomeNamespace.equalsIgnoreCase("minecraft"))
-                biomeNamespace = LambdaFoxes.MODID;
+                biomeNamespace = LambdaFoxes.NAMESPACE;
             this.biomes = LambdaFoxes.REQUIRED_TAGS.add(biomeNamespace + ":fox_spawn/" + id.getPath());
             this.modelId = modelId;
         }
@@ -438,7 +439,7 @@ public class FoxType implements Nameable {
         public FoxType register() {
             int numericId = computeNumericId(id);
             if (numericId == 0 || numericId == 1)
-                throw new IllegalStateException("FoxType `" + id.toString() + "` is invalid, cannot compute valid numeric id.");
+                throw new IllegalStateException("FoxType `" + id + "` is invalid, cannot compute valid numeric id.");
 
             return new FoxType(this.id, numericId, this.weight, this.inherited, this.natural, this.scaleFactor, this.limitedTo, this.fireImmune, this.model);
         }

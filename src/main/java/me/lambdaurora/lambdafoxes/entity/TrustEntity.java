@@ -30,8 +30,7 @@ import java.util.UUID;
  * @version 1.0.0
  * @since 1.0.0
  */
-public interface TrustEntity
-{
+public interface TrustEntity {
     /**
      * Returns the trust level of this entity.
      *
@@ -58,8 +57,7 @@ public interface TrustEntity
      *
      * @return {@code true} if this entity is wild, else {@code false}
      */
-    default boolean isWild()
-    {
+    default boolean isWild() {
         return this.getTrustLevel() <= 1;
     }
 
@@ -68,8 +66,7 @@ public interface TrustEntity
      *
      * @return {@code true} if this entity is tamed, else {@code false}
      */
-    default boolean isTamed()
-    {
+    default boolean isTamed() {
         return this.getTrustLevel() >= this.getMaxTrustLevel();
     }
 
@@ -99,8 +96,7 @@ public interface TrustEntity
      * @param entity the entity to check
      * @return {@code true} if the specified entity is the owner, else {@code false}
      */
-    default boolean isOwner(@NotNull LivingEntity entity)
-    {
+    default boolean isOwner(@NotNull LivingEntity entity) {
         Optional<UUID> owner = this.getOwnerUuid();
         return owner.isPresent() && owner.get().equals(entity.getUuid());
     }

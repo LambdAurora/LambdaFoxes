@@ -10,6 +10,12 @@
     "SpawnRestrictionMixin",
     "terrestria.PricklyDesertPlantBlockMixin"
   ],
+  "client": [
+    "client.EntityModelLayersAccessor",
+    "client.FoxEntityRendererMixin",
+    "client.FoxHeldItemFeatureRendererMixin",
+    "client.ModelPartAccessor"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

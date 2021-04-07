@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.lambdaurora.lambdafoxes.client.mixin;
+package me.lambdaurora.lambdafoxes.mixin.client;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.lambdaurora.lambdafoxes.client.FoxModels;

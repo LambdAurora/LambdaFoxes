@@ -24,8 +24,7 @@ package me.lambdaurora.lambdafoxes.entity;
  * @version 1.0.0
  * @since 1.0.0
  */
-public interface PettableEntity
-{
+public interface PettableEntity {
     /**
      * Returns whether this entity should animate the pet or not.
      *

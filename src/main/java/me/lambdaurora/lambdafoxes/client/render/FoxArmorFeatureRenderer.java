@@ -41,14 +41,16 @@ public class FoxArmorFeatureRenderer extends FeatureRenderer<FoxEntity, FoxEntit
     private final FoxType type;
     private final LambdaFoxEntityModel<FoxEntity> model;// = new LambdaFoxEntityModel(.25f);
 
-    public FoxArmorFeatureRenderer(FeatureRendererContext<FoxEntity, FoxEntityModel<FoxEntity>> context, FoxType type, LambdaFoxEntityModel<FoxEntity> model) {
+    public FoxArmorFeatureRenderer(FeatureRendererContext<FoxEntity, FoxEntityModel<FoxEntity>> context,
+                                   FoxType type, LambdaFoxEntityModel<FoxEntity> model) {
         super(context);
         this.type = type;
         this.model = model;
     }
 
     @Override
-    public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, FoxEntity fox, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
+    public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, FoxEntity fox,
+                       float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
         if (!((LambdaFoxEntity) fox).getFoxType().equals(this.type))
             return;
         ItemStack stack = ((LambdaFoxEntity) fox).getFoxArmor();
@@ -71,7 +73,8 @@ public class FoxArmorFeatureRenderer extends FeatureRenderer<FoxEntity, FoxEntit
                 b = (color & 255) / 255.f;
             }
 
-            VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(armor.entityTexture), false, stack.hasEnchantments());
+            VertexConsumer vertexConsumer = ItemRenderer.getArmorGlintConsumer(vertexConsumers,
+                    RenderLayer.getArmorCutoutNoCull(armor.entityTexture), false, stack.hasEnchantments());
             this.model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, r, g, b, 1.f);
         }
     }
