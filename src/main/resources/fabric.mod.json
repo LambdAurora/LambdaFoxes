@@ -17,19 +17,20 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "me.lambdaurora.lambdafoxes.LambdaFoxes"
+      "dev.lambdaurora.lambdafoxes.LambdaFoxes"
     ],
     "client": [
-      "me.lambdaurora.lambdafoxes.client.LambdaFoxesClient"
+      "dev.lambdaurora.lambdafoxes.client.LambdaFoxesClient"
     ]
   },
   "mixins": [
     "lambdafoxes.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=1.17-alpha.21.14.a",
-    "fabricloader": ">=0.11.1",
-    "fabric": ">=0.32.6+1.17"
+    "minecraft": ">=1.17-alpha.21.19.a",
+    "fabricloader": ">=0.11.3",
+    "fabric": ">=0.34.4+1.17",
+    "java": ">=16"
   },
   "recommends": {
     "modmenu": ">=1.12.2"
