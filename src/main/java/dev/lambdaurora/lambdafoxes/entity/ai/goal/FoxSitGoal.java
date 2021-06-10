@@ -33,9 +33,9 @@ public class FoxSitGoal extends Goal {
 
     public FoxSitGoal(@NotNull FoxEntity fox) {
         this.fox = fox;
-        this.WORRIABLE_ENTITY_PREDICATE = TargetPredicate.method_36625()
-                .setBaseMaxDistance(12.0D)
-                .method_36627()
+        this.WORRIABLE_ENTITY_PREDICATE = TargetPredicate.createAttackable()
+                .setBaseMaxDistance(12.0)
+                .ignoreVisibility()
                 .setPredicate(fox.new WorriableEntityFilter());
         this.setControls(EnumSet.of(Control.JUMP, Control.MOVE));
     }

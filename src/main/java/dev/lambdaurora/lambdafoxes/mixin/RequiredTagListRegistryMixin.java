@@ -30,7 +30,7 @@ import java.util.Set;
 
 @Mixin(RequiredTagListRegistry.class)
 public class RequiredTagListRegistryMixin {
-    @Inject(method = "getRequiredTags", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getBuiltinTags", at = @At("RETURN"), cancellable = true)
     private static void addFabricTags(CallbackInfoReturnable<Set<RequiredTagList<?>>> cir) {
         var set = new HashSet<>(cir.getReturnValue());
         set.addAll(UhOhRequiredTagListRegistry.getFabricRequiredTags());

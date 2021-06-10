@@ -1,7 +1,7 @@
 plugins {
-    id 'fabric-loom' version '0.8-SNAPSHOT'
+    id 'org.quiltmc.loom' version '0.8.+'
     id 'java-library'
-    id 'org.cadixdev.licenser' version '0.5.0'
+    id 'org.cadixdev.licenser' version '0.6.0'
 }
 
 group = project.maven_group
@@ -11,24 +11,23 @@ archivesBaseName = project.archives_base_name
 // This field defines the Java version your mod target.
 def targetJavaVersion = 16
 
-def getMCVersionString() {
-    if (project.minecraft_version.matches("\\d\\dw\\d\\d[a-z]")) {
+boolean isMCVersionNonRelease() {
+    return project.minecraft_version.matches('^\\d\\dw\\d\\d[a-z]$')
+            || project.minecraft_version.matches('\\d+\\.\\d+-(pre|rc)(\\d+)')
+}
+
+String getMCVersionString() {
+    if (isMCVersionNonRelease()) {
         return project.minecraft_version
     }
-    int lastDot = project.minecraft_version.lastIndexOf('.')
-    return project.minecraft_version.substring(0, lastDot)
+    def version = project.minecraft_version.split('\\.')
+    return version[0] + '.' + version[1]
 }
 
 repositories {
-    mavenLocal()
-    mavenCentral()
     maven {
-        name 'Jitpack'
-        url 'https://jitpack.io'
-    }
-    maven {
-        name = 'Earthcomputer Mods'
-        url = 'https://dl.bintray.com/earthcomputer/mods'
+        name = 'Fabric'
+        url = 'https://maven.fabricmc.net/'
     }
 }
 
@@ -40,16 +39,12 @@ configurations {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    mappings "org.quiltmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}:v2"
+    modImplementation "org.quiltmc:quilt-loader:${project.loader_version}"
 
-    // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-
-    //modRuntime "io.github.prospector:modmenu:${project.modmenu_version}"
-
-    //modRuntime "com.terraformersmc:terrestria:2.1.5+build.28"
-    //modRuntime "com.terraformersmc:traverse:3.0.3+build.13"
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}") {
+        exclude group: 'net.fabricmc'
+    }
 }
 
 java {
@@ -60,21 +55,21 @@ java {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = "UTF-8"
+    it.options.encoding = 'UTF-8'
 
     it.options.release.set(targetJavaVersion)
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property 'version', project.version
 
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
     }
 }
 
 jar {
-    from("LICENSE") {
+    from('LICENSE') {
         rename { "${it}_${project.archivesBaseName}" }
     }
 }

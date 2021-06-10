@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:netherite_ingot"
+            "items": [
+              "minecraft:netherite_ingot"
+            ]
           }
         ]
       }
@@ -21,7 +23,9 @@
       "conditions": {
         "items": [
           {
-            "item": "lambdafoxes:diamond_fox_armor"
+            "items": [
+              "lambdafoxes:diamond_fox_armor"
+            ]
           }
         ]
       }
@@ -31,7 +35,9 @@
       "conditions": {
         "items": [
           {
-            "item": "lambdafoxes:netherite_fox_armor"
+            "items": [
+              "lambdafoxes:netherite_fox_armor"
+            ]
           }
         ]
       }
@@ -45,7 +51,6 @@
   },
   "requirements": [
     [
-      "has_berries",
       "has_ingot",
       "has_string",
       "has_wool",

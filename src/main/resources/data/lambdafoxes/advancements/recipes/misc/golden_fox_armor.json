@@ -21,7 +21,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:gold_ingot"
+            "items": [
+              "minecraft:gold_ingot"
+            ]
           }
         ]
       }
@@ -31,7 +33,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:string"
+            "items": [
+              "minecraft:string"
+            ]
           }
         ]
       }
@@ -51,7 +55,9 @@
       "conditions": {
         "items": [
           {
-            "item": "lambdafoxes:golden_fox_armor"
+            "items": [
+              "lambdafoxes:golden_fox_armor"
+            ]
           }
         ]
       }
