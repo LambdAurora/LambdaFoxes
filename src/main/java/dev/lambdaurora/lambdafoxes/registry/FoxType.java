@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>
+ * Copyright (c) 2021 LambdAurora <aurora42lambda@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -52,7 +52,7 @@ public class FoxType {
     public static final Identifier BASE_FOX_MODEL = LambdaFoxes.id("fox");
 
     public static final FoxType RED = new FoxType(new Identifier("minecraft", "red"), 0,
-            8, null, true, 1.0F, EntityType.FOX, false,
+            8, null, true, 1.f, EntityType.FOX, false,
             BASE_FOX_MODEL) {
         @Override
         public String getKey() {
@@ -66,7 +66,7 @@ public class FoxType {
         }
     };
     public static final FoxType SNOW = new FoxType(new Identifier("minecraft", "snow"), 1,
-            8, null, true, 1.0F, EntityType.FOX, false,
+            8, null, true, 1.f, EntityType.FOX, false,
             BASE_FOX_MODEL) {
         @Override
         public String getKey() {
@@ -81,7 +81,7 @@ public class FoxType {
     public static final FoxType WHITE = new Builder(LambdaFoxes.id("white"), 2, true).inherits(RED).register();
 
     public static final FoxType FENNEC = new Builder(LambdaFoxes.id("fennec"), 8, true)
-            .scaleFactor(0.8f).register();
+            .scaleFactor(.8f).register();
 
     private final Identifier id;
     private final int numericId;

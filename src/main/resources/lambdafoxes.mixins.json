@@ -7,7 +7,10 @@
     "EnchantmentMixin",
     "FoxEntityMixin",
     "RequiredTagListRegistryMixin",
+    "ServerResourceManagerMixin",
     "SpawnRestrictionMixin",
+    "TagManagerAccessor",
+    "TagManagerLoaderAccessor",
     "terrestria.PricklyDesertPlantBlockMixin"
   ],
   "client": [

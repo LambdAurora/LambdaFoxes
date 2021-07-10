@@ -52,8 +52,7 @@
   "requirements": [
     [
       "has_ingot",
-      "has_string",
-      "has_wool",
+      "has_fox_armor",
       "has_self",
       "has_the_recipe"
     ]

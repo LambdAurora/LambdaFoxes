@@ -15,19 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package dev.lambdaurora.lambdafoxes.mixin.client;
+package dev.lambdaurora.lambdafoxes.mixin;
 
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.render.entity.model.EntityModelLayers;
+import net.minecraft.tag.TagManagerLoader;
+import net.minecraft.util.registry.DynamicRegistryManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.Set;
-
-@Mixin(EntityModelLayers.class)
-public interface EntityModelLayersAccessor {
-    @Accessor("LAYERS")
-    static Set<EntityModelLayer> getLayers() {
-        throw new IllegalStateException("Accessor failed to apply.");
-    }
+@Mixin(TagManagerLoader.class)
+public interface TagManagerLoaderAccessor {
+    @Accessor
+    DynamicRegistryManager getRegistryManager();
 }
