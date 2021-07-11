@@ -27,8 +27,8 @@ import java.util.Map;
 @Mixin(ModelPart.class)
 public interface ModelPartAccessor {
     @Accessor("cuboids")
-    List<ModelPart.Cuboid> lambdafoxes_getCuboids();
+    List<ModelPart.Cuboid> lambdafoxes$getCuboids();
 
     @Accessor("children")
-    Map<String, ModelPart> lambdafoxes_getChildren();
+    Map<String, ModelPart> lambdafoxes$getChildren();
 }

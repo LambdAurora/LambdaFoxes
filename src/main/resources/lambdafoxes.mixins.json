@@ -7,7 +7,6 @@
     "EnchantmentMixin",
     "FoxEntityMixin",
     "RequiredTagListRegistryMixin",
-    "ServerResourceManagerMixin",
     "SpawnRestrictionMixin",
     "TagManagerAccessor",
     "TagManagerLoaderAccessor",
