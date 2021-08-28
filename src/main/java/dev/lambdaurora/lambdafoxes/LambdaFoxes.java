@@ -17,27 +17,14 @@
 
 package dev.lambdaurora.lambdafoxes;
 
-import dev.lambdaurora.lambdafoxes.mixin.TagManagerAccessor;
-import dev.lambdaurora.lambdafoxes.mixin.TagManagerLoaderAccessor;
 import dev.lambdaurora.lambdafoxes.registry.LambdaFoxesRegistry;
-import dev.lambdaurora.lambdafoxes.tag.UhOhRequiredTagListRegistry;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.tag.RequiredTagList;
-import net.minecraft.tag.TagGroupLoader;
-import net.minecraft.tag.TagManager;
-import net.minecraft.tag.TagManagerLoader;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.SpawnSettings.SpawnEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,7 +39,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class LambdaFoxes implements ModInitializer {
     public static final String NAMESPACE = "lambdafoxes";
-    public static final RequiredTagList<Biome> REQUIRED_TAGS = UhOhRequiredTagListRegistry.register(Registry.BIOME_KEY, "tags/biomes");
     private static LambdaFoxes INSTANCE;
     public final Logger logger = LogManager.getLogger("lambdafoxes");
 
@@ -62,10 +48,6 @@ public class LambdaFoxes implements ModInitializer {
         this.log("Initializing LambdaFoxes...");
 
         LambdaFoxesRegistry.init();
-
-        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
-            this.reloadBiomeTags(server.getResourceManager(), server.getRegistryManager(), server.getTagManager());
-        });
 
         BiomeModifications.create(id("foxier_fox"))
                 .add(ModificationPhase.ADDITIONS,
@@ -136,18 +118,6 @@ public class LambdaFoxes implements ModInitializer {
      */
     public static Identifier id(@NotNull String path) {
         return new Identifier(NAMESPACE, path);
-    }
-
-    private void reloadBiomeTags(ResourceManager resourceManager, DynamicRegistryManager registryManager, TagManager registryTagManager) {
-        registryManager.getOptional(Registry.BIOME_KEY).ifPresent(biomeRegistry -> {
-            var requiredTagList = LambdaFoxes.REQUIRED_TAGS;
-            var groupLoader = new TagGroupLoader<>(biomeRegistry::getOrEmpty, requiredTagList.getDataType());
-            var tagGroup = groupLoader.load(resourceManager);
-            var mutableMap = new Object2ObjectOpenHashMap<>(((TagManagerAccessor) registryTagManager).getTagGroups());
-            mutableMap.put(Registry.BIOME_KEY, tagGroup);
-            ((TagManagerAccessor) registryTagManager).setTagGroups(mutableMap);
-            requiredTagList.updateTagManager(registryTagManager);
-        });
     }
 
     public static LambdaFoxes get() {

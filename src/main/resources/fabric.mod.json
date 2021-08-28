@@ -28,13 +28,9 @@
   ],
   "depends": {
     "minecraft": ">=1.17",
-    "fabricloader": ">=0.11.3",
-    "fabric": ">=0.34.9+1.17",
+    "fabricloader": ">=0.11.6",
+    "fabric": ">=0.39.2+1.17",
     "java": ">=16"
-  },
-  "suggests": {
-    "flamingo": "*",
-    "ltr": "*"
   },
   "breaks": {
     "optifabric": "*"

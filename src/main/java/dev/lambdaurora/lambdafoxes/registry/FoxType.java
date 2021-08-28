@@ -20,6 +20,7 @@ package dev.lambdaurora.lambdafoxes.registry;
 import dev.lambdaurora.lambdafoxes.LambdaFoxes;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.tag.TagFactory;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.EntityType;
@@ -117,10 +118,10 @@ public class FoxType {
             this.biomes = inherited.biomes;
             this.modelId = inherited.modelId;
         } else {
-            var biomeNamespace = id.getNamespace();
-            if (biomeNamespace.equalsIgnoreCase("minecraft"))
-                biomeNamespace = LambdaFoxes.NAMESPACE;
-            this.biomes = LambdaFoxes.REQUIRED_TAGS.add(biomeNamespace + ":fox_spawn/" + id.getPath());
+            var biomeTagNamespace = id.getNamespace();
+            if (biomeTagNamespace.equalsIgnoreCase("minecraft"))
+                biomeTagNamespace = LambdaFoxes.NAMESPACE;
+            this.biomes = TagFactory.BIOME.create(new Identifier(biomeTagNamespace, "fox_spawn/" + id.getPath()));
             this.modelId = modelId;
         }
 
